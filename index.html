@@ -1,1 +1,1254 @@
-<!-- Tokei-chan v18 -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tokei-chan · Learn to Read Time in Japanese</title>
+<style>
+:root{
+  --accent:#c75b77;       /* sakura rose */
+  --accent-soft:#fbeef2;
+  --accent-line:#ecc9d3;
+  --ink:#2c3240; --muted:#7a8395; --line:#e9e3e7;
+  --good:#1f9d57; --good-bg:#e9f7ef;
+  --bad:#dc3a4b;  --bad-bg:#fdeef0;
+  --warn:#b97a08; --warn-bg:#fdf5e2;
+  --bg:#faf7f8; --card:#fff;
+  --pink-2:#e2799b; --pink-3:#f3a7bd; --gold:#e8c66b;
+  --star:#d9a52b;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  background-color:var(--bg); color:var(--ink);
+  background-image:radial-gradient(rgba(199,91,119,.10) 1.4px, transparent 1.6px),radial-gradient(rgba(243,167,189,.20) 1.2px, transparent 1.4px);
+  background-size:28px 28px,34px 34px; background-position:0 0,14px 17px;
+  font-family:"Hiragino Maru Gothic ProN","Yuanti SC","Arial Rounded MT Bold","Varela Round",Quicksand,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Hiragino Sans","Noto Sans JP",sans-serif;
+  font-size:16px; line-height:1.5;
+}
+#app{max-width:880px;margin:0 auto;padding:14px 14px 40px}
+header.top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+h1{font-size:1.2rem;color:var(--accent);margin:0;font-weight:800;letter-spacing:.2px}
+h1::before{content:"\271F\FE0E  ";color:var(--pink-3)}
+h1 small{display:block;font-size:.72rem;color:var(--muted);font-weight:600}
+.spacer{flex:1}
+.tabs{display:flex;gap:6px}
+.tab-btn{
+  border:1px solid var(--line);background:#fff;color:var(--muted);
+  padding:8px 16px;border-radius:999px;font-size:.9rem;font-weight:700;cursor:pointer;min-height:40px;
+}
+.tab-btn.on{background:linear-gradient(135deg,var(--pink-2),var(--accent));border-color:transparent;color:#fff}
+.icon-btn{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 12px;cursor:pointer;font-size:.95rem;min-height:40px}
+.lang-toggle{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;background:#fff}
+.lang-toggle button{border:0;background:#fff;padding:8px 12px;font-weight:700;color:var(--muted);cursor:pointer;min-height:40px;font-size:.85rem}
+.lang-toggle button.on{background:var(--accent);color:#fff}
+
+.statbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:6px 0 10px}
+.stat{
+  background:#fff;border:1px solid var(--line);border-radius:999px;
+  padding:5px 12px;font-size:.82rem;font-weight:700;color:var(--muted);
+}
+.stat b{color:var(--accent)}
+
+progress#progBar{
+  width:100%;height:10px;border-radius:999px;appearance:none;-webkit-appearance:none;border:0;background:var(--line);
+}
+progress#progBar::-webkit-progress-bar{background:var(--line);border-radius:999px}
+progress#progBar::-webkit-progress-value{background:linear-gradient(90deg,var(--pink-2),var(--accent));border-radius:999px}
+progress#progBar::-moz-progress-bar{background:linear-gradient(90deg,var(--pink-2),var(--accent));border-radius:999px}
+
+.level-row{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 12px}
+.lv{
+  border:1px solid var(--line);background:#fff;border-radius:12px;
+  padding:8px 14px;font-size:.9rem;font-weight:700;cursor:pointer;min-height:40px;color:var(--ink);
+  transition:transform .12s ease,border-color .12s ease;
+}
+.lv:hover{border-color:var(--accent);transform:translateY(-1px)}
+.lv.locked{color:var(--muted);background:var(--bg);cursor:default;border-style:dashed}
+.lv.locked:hover{border-color:var(--line);transform:none}
+.lv.current{border-color:var(--accent);color:var(--accent);box-shadow:0 4px 12px rgba(199,91,119,.12)}
+.lv.done{background:var(--good-bg);border-color:var(--good);color:var(--good)}
+.lv small{font-weight:600;color:var(--muted);margin-left:4px}
+
+.card{
+  background:var(--card);border:1px solid var(--line);border-radius:20px;
+  padding:14px;display:flex;flex-wrap:wrap;gap:14px;
+  box-shadow:0 8px 22px rgba(199,91,119,.08);
+}
+.clock-wrap{flex:1 1 240px;min-width:200px}
+.clock-wrap svg{width:100%;height:auto;display:block;filter:drop-shadow(0 10px 16px rgba(199,91,119,.16));animation:kBob 3.4s ease-in-out infinite;transform-origin:50% 90%}
+@keyframes kBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@media (prefers-reduced-motion:reduce){.clock-wrap svg{animation:none}}
+
+.right-col{flex:1 1 300px;min-width:260px}
+.item-title{font-size:.95rem;font-weight:800;color:var(--muted);margin:0 0 8px}
+.stars-row{display:flex;gap:4px;align-items:center;margin-bottom:10px}
+.item-stars{color:var(--star);font-size:.95rem;letter-spacing:2px;text-shadow:0 1px 2px rgba(217,165,43,.35)}
+
+.tile-row{display:flex;flex-wrap:wrap;gap:8px}
+.tile{
+  position:relative;border:1px solid var(--line);background:#fff;border-radius:16px;
+  padding:12px 10px;font-size:1rem;font-weight:700;cursor:pointer;
+  min-height:52px;text-align:center;line-height:1.35;
+  box-shadow:0 2px 6px rgba(199,91,119,.06);transition:transform .12s ease,box-shadow .12s ease,border-color .12s ease;
+}
+.tile:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 16px rgba(199,91,119,.12)}
+.tile:active{transform:translateY(0) scale(.97)}
+.tile.sel{border-color:var(--accent);background:var(--accent-soft)}
+.tile.correct{border-color:var(--good);background:var(--good-bg);color:var(--good)}
+.tile.wrong{border-color:var(--bad);background:var(--bad-bg);color:var(--bad)}
+.tile.ghost{opacity:.45;pointer-events:none}
+.tile .sub{display:block;font-size:.78rem;color:var(--muted);font-weight:600}
+
+.chip-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chip{
+  border:1px solid var(--line);background:#fff;border-radius:12px;
+  padding:7px 11px;font-size:.95rem;font-weight:700;cursor:pointer;min-height:38px;color:var(--ink);
+  transition:transform .12s ease,border-color .12s ease,color .12s ease;
+}
+.chip:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px)}
+.chip:active{transform:scale(.94)}
+.chip.sel{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;align-items:center}
+.btn{
+  border:1px solid var(--line);background:#fff;color:var(--ink);
+  border-radius:999px;padding:9px 20px;font-size:.95rem;font-weight:700;cursor:pointer;min-height:42px;
+  transition:transform .12s ease,box-shadow .12s ease;
+}
+.btn:hover{transform:translateY(-1px);box-shadow:0 6px 14px rgba(199,91,119,.14)}
+.btn:active{transform:scale(.96)}
+.btn-primary{background:linear-gradient(135deg,var(--pink-2),var(--accent));border-color:transparent;color:#fff;box-shadow:0 4px 12px rgba(199,91,119,.28)}
+.btn.ghost{background:transparent;border-color:transparent;color:var(--muted)}
+
+.feedback{position:relative;overflow:hidden;border-radius:14px;margin-top:10px;padding:12px 14px;font-weight:700;display:none}
+.feedback.show{display:block}
+.f-ok{background:var(--good-bg);color:var(--good);border:1px solid #c6ebd4}
+.f-bad{background:var(--bad-bg);color:var(--bad);border:1px solid #f5c2c8}
+
+.mastery{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.m-item{background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px 10px;font-size:.85rem;font-weight:700;min-width:72px;text-align:center}
+.m-item.stars{color:var(--star)}
+
+.save-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:14px}
+.save-note{font-size:.78rem;color:var(--muted);margin:0}
+
+footer{margin-top:24px;text-align:center;color:var(--muted);font-size:.78rem}
+
+.overlay{position:fixed;inset:0;background:rgba(44,50,64,.35);display:flex;align-items:center;justify-content:center;padding:20px;z-index:50}
+.overlay.hidden{display:none}
+.panel{background:#fff;border-radius:20px;padding:22px;max-width:520px;width:100%;max-height:90vh;overflow:auto;box-shadow:0 20px 50px rgba(44,50,64,.18)}
+.panel h2{margin:0 0 12px;font-size:1.1rem;color:var(--accent)}
+.panel p{margin:0 0 10px}
+.panel table{width:100%;border-collapse:collapse;margin:8px 0;font-size:.9rem}
+.panel th,.panel td{padding:6px 8px;border:1px solid var(--line);text-align:left}
+.panel th{background:var(--accent-soft);color:var(--accent)}
+.panel .o{color:var(--good);font-weight:700}
+.panel .x{color:var(--bad);font-weight:700}
+.lesnav{display:flex;justify-content:space-between;align-items:center;margin-top:14px}
+.dots{display:flex;gap:6px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--line)}
+.dot.on{background:var(--accent)}
+
+.min-row{display:flex;gap:8px;align-items:center;margin-top:6px}
+.min-val{width:64px;text-align:center;border:1px solid var(--line);border-radius:12px;padding:8px;font-size:1rem;font-weight:700}
+.min-fixed{font-size:1.05rem;font-weight:800;color:var(--accent);background:var(--accent-soft);border:1px solid var(--accent-line);border-radius:12px;padding:7px 18px}
+.stepbtn{width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:#fff;font-size:1.1rem;cursor:pointer;font-weight:700}
+.stepbtn:hover{border-color:var(--accent)}
+.readout{font-size:1.35rem;font-weight:800;text-align:center;margin:10px 0}
+.readout small{display:block;font-size:.75rem;color:var(--muted);font-weight:600}
+
+@media(max-width:560px){
+  #app{padding:10px 10px 30px}
+  h1{font-size:1.05rem}
+  .clock-wrap{min-width:160px}
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="top">
+    <h1><small>Tokei-chan · Learn to read time in Japanese</small></h1>
+    <div class="spacer"></div>
+    <div class="tabs">
+      <button class="tab-btn on" id="btnGame" data-en="ゲーム" data-pt="Jogo">ゲーム</button>
+      <button class="tab-btn" id="btnGuide" data-en="ガイド" data-pt="Guia">ガイド</button>
+    </div>
+    <div class="lang-toggle">
+      <button class="on" id="btnEN">EN</button>
+      <button id="btnPT">PT</button>
+    </div>
+    <button class="icon-btn" id="btnSound" aria-label="sound">🔊</button>
+  </header>
+
+  <div class="statbar">
+    <span class="stat" id="stStreak">🔥 0</span>
+    <span class="stat" id="stScore">⭐ 0</span>
+    <span class="stat" id="stBest">🏆 0</span>
+    <span class="stat" id="stProgress">📈 0/0</span>
+    <span class="stat" id="stLevel" style="display:none">Lv —</span>
+  </div>
+  <progress id="progBar" value="0" max="100"></progress>
+
+  <div class="level-row" id="levelRow"></div>
+
+  <div class="card" id="gameCard">
+    <div class="clock-wrap" id="clockWrap"></div>
+    <div class="right-col" id="rightCol">
+      <p class="item-title" id="modeTitle"></p>
+      <div class="stars-row"><span class="item-stars" id="itemStars">☆☆☆☆☆</span></div>
+      <div id="answerArea"></div>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="btnMain"></button>
+        <button class="btn" id="btnSkip" data-en="Skip · わからない" data-pt="Pular · Não sei">Skip · わからない</button>
+      </div>
+      <div class="feedback" id="feedback"></div>
+    </div>
+  </div>
+
+  <div class="mastery" id="masteryRow"></div>
+
+  <div class="save-row">
+    <button class="btn ghost" id="btnExport" data-en="📋 Copy save code" data-pt="📋 Copiar código de save">📋 Copy save code</button>
+    <button class="btn ghost" id="btnPasteCode" data-en="📥 Paste save code" data-pt="📥 Colar código de save">📥 Paste save code</button>
+    <button class="btn ghost" id="btnImport" data-en="📂 Import save" data-pt="📂 Importar save">📂 Import save</button>
+    <input type="file" id="fileImport" accept=".json" style="display:none">
+  </div>
+</div>
+
+<div class="overlay hidden" id="welcomeOv">
+  <div class="panel">
+    <h2 data-en="Welcome to Tokei-chan!" data-pt="Bem-vindo ao Tokei-chan!">Welcome to Tokei-chan!</h2>
+    <p data-en="Practice reading the clock in Japanese through short, focused exercises." data-pt="Pratique a leitura do relógio em japonês com exercícios curtos e focados.">Practice reading the clock in Japanese through short, focused exercises.</p>
+    <p data-en="Pick a mode and start playing. Your progress is saved automatically." data-pt="Escolha um modo e comece a jogar. Seu progresso é salvo automaticamente.">Pick a mode and start playing. Your progress is saved automatically.</p>
+    <div class="btn-row">
+      <button class="btn btn-primary" id="btnWelcome" data-en="Start" data-pt="Começar">Start</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay hidden" id="lessonOv">
+  <div class="panel" id="lessonPanel"></div>
+</div>
+
+<div class="overlay hidden" id="codeOv">
+  <div class="panel">
+    <h2 id="codeTitle"></h2>
+    <textarea id="codeTa" rows="5" spellcheck="false" autocomplete="off" style="width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:12px;padding:10px;font-family:inherit;font-size:.85rem;resize:vertical"></textarea>
+    <div class="lesnav">
+      <button class="btn ghost" id="btnCodeCancel"></button>
+      <button class="btn btn-primary" id="btnCodeOk"></button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay hidden" id="doneOv">
+  <div class="panel">
+    <h2 data-en="Level complete!" data-pt="Nível completo!">Level complete!</h2>
+    <p id="doneMsg"></p>
+    <div class="btn-row">
+      <button class="btn btn-primary" id="btnNextLevel" data-en="Next level →" data-pt="Próximo nível →">Next level →</button>
+      <button class="btn ghost" id="btnStay" data-en="Stay here" data-pt="Ficar aqui">Stay here</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <button class="btn ghost" id="btnReset" data-en="はじめから · Reset progress" data-pt="はじめから · Recomeçar">はじめから · Reset progress</button>
+  <p class="save-note" style="margin:6px 0 0;opacity:.8">Tokei-chan v18</p>
+</footer>
+
+<script>
+(function(){
+"use strict";
+
+/* ================= STATE ================= */
+var S = {
+  level: 0, mode: 'mc', key: '', ans: null, cur: null,
+  setH: 1, setM: 0, setAp: null,
+  answered: false, correct: false, streak: 0,
+  soundOn: true, lang: 'en', tab: 'game'
+};
+var doneShown = false;
+
+/* ================= DATA ================= */
+var AP = { gozen: {en:'AM', k:'ごぜん'}, gogo: {en:'PM', k:'ごご'} };
+
+var LEVELS = [
+  { id:1, name:'〜時',       label:{en:"O'clock", pt:'Em ponto'},        step:0, minLock:0,    lesson:'irreg', items:[] },
+  { id:2, name:'〜時半',     label:{en:'Half past', pt:'E meia'},        step:0, minLock:30,   lesson:'han',   items:[] },
+  { id:3, name:'5分',        label:{en:'5-min steps', pt:'De 5 em 5 min'}, step:5, minLock:null, lesson:'pun', items:[] },
+  { id:4, name:'ぴったり (ぷん)', label:{en:'Exact — pun', pt:'Exatos — pun'}, step:1, minLock:null, lesson:'exact', items:[] },
+  { id:5, name:'ぴったり (ふん)', label:{en:'Exact — fun', pt:'Exatos — fun'}, step:1, minLock:null, lesson:'exact', items:[] },
+  { id:6, name:'ごぜん・ごご', label:{en:'AM / PM', pt:'AM / PM'},        step:5, minLock:null, lesson:'ampm',  items:[] }
+];
+(function(){
+  var i, m;
+  for (i=1;i<=12;i++){ LEVELS[0].items.push('h'+i); LEVELS[1].items.push('b'+i); }
+  for (m=5;m<=55;m+=5){ LEVELS[2].items.push('s'+m); }
+  [1,3,4,6,8,10].forEach(function(n){ LEVELS[3].items.push('u'+n); });
+  [2,5,7,9].forEach(function(n){ LEVELS[4].items.push('u'+n); });
+  for (i=1;i<=12;i++){ LEVELS[5].items.push('z'+i); }
+})();
+
+function itemTime(key){
+  var t = key.charAt(0), n = parseInt(key.slice(1),10);
+  if (t === 'h') return {h:n, m:0, ap:null};
+  if (t === 'b') return {h:n, m:30, ap:null};
+  if (t === 's') return {h: 1+Math.floor(Math.random()*12), m:n, ap:null};
+  if (t === 'z') return {h:n, m: 5*Math.floor(Math.random()*12), ap: Math.random() < 0.5 ? 'gozen' : 'gogo'};
+  var tens = Math.floor(Math.random()*6);
+  var mm = tens*10 + (n%10);
+  if (n === 10) mm = tens === 0 ? 10 : tens*10;
+  if (mm === 0) mm = 10;
+  return {h: 1+Math.floor(Math.random()*12), m:mm, ap:null};
+}
+
+function itemWeight(key){
+  var t = itemTime(key), w = 1;
+  if (TRICKY[t.h]) w += 1.5;
+  return w;
+}
+
+var TRICKY = {4:1, 7:1, 9:1};
+
+/* ================= READINGS ================= */
+var HJP = ['','いちじ','にじ','さんじ','よじ','ごじ','ろくじ','しちじ','はちじ','くじ','じゅうじ','じゅういちじ','じゅうにじ'];
+var HR  = ['','ichiji','niji','sanji','yoji','goji','rokuji','shichiji','hachiji','kuji','juuji','juuichiji','juuniji'];
+
+var MBASE = [null,
+  {k:'いっぷん', r:'ippun',   sok:1},
+  {k:'にふん',   r:'nifun'},
+  {k:'さんぷん', r:'sanpun',  pun:1},
+  {k:'よんぷん', r:'yonpun',  pun:1},
+  {k:'ごふん',   r:'gofun'},
+  {k:'ろっぷん', r:'roppun',  sok:1},
+  {k:'ななふん', r:'nanafun', altK:['しちふん'], altR:['shichifun']},
+  {k:'はっぷん', r:'happun',  sok:1, altK:['はちふん','ぱっぷん'], altR:['hachifun','pappun']},
+  {k:'きゅうふん', r:'kyuufun'},
+  {k:'じゅっぷん', r:'juppun', sok:1}
+];
+var TENS   = {1:{k:'じゅう', r:'juu'}, 2:{k:'にじゅう', r:'nijuu'}, 3:{k:'さんじゅう', r:'sanjuu'}, 4:{k:'よんじゅう', r:'yonjuu'}, 5:{k:'ごじゅう', r:'gojuu'}};
+var TENSJP = {2:{k:'にじゅっぷん', r:'nijuppun'}, 3:{k:'さんじゅっぷん', r:'sanjuppun'}, 4:{k:'よんじゅっぷん', r:'yonjuppun'}, 5:{k:'ごじゅっぷん', r:'gojuppun'}};
+var KDI = {1:'いち',2:'に',3:'さん',4:'よん',5:'ご',6:'ろく',7:'なな',8:'はち',9:'きゅう',10:'じゅう',11:'じゅういち',12:'じゅうに'};
+var RDI = {1:'ichi',2:'ni',3:'san',4:'yon',5:'go',6:'roku',7:'nana',8:'hachi',9:'kyuu',10:'juu',11:'juuichi',12:'juuni'};
+
+function minRead(n){
+  if (n <= 10) return MBASE[n];
+  var t = Math.floor(n/10), u = n%10;
+  if (u === 0) return TENSJP[t];
+  return {k: TENS[t].k + MBASE[u].k, r: TENS[t].r + MBASE[u].r};
+}
+function minutePartKana(m){ return m === 0 ? '' : (m === 30 ? 'はん' : minRead(m).k); }
+function apPrefix(ap){ return ap ? AP[ap].k + ' · ' : ''; }
+function timeKana(h,m,ap){ return apPrefix(ap) + HJP[h] + (m===0?'':(m===30?'はん':minRead(m).k)); }
+function timeRomaji(h,m,ap){ return (ap?AP[ap].en+' ':'') + HR[h] + (m===0?'':(m===30?' han':' '+minRead(m).r)); }
+
+var NK = ['','いち','に','さん','よん','ご','ろく','なな','はち','きゅう','じゅう'];
+var NR = ['','ichi','ni','san','yon','go','roku','nana','hachi','kyuu','juu'];
+
+/* ================= PROGRESS ================= */
+var MASTER = 10;
+var KEY = 'tokei-chan-progress-v1';
+
+function blankProg(){ return {m:{}, score:0, best:0, total:0, correct:0}; }
+var prog = load();
+
+function load(){
+  try{ var s = localStorage.getItem(KEY); if (s) return JSON.parse(s); }catch(e){}
+  return blankProg();
+}
+function save(){
+  try{ localStorage.setItem(KEY, JSON.stringify(prog)); }catch(e){}
+}
+
+function okOf(key){ var x = prog.m[key]; return x ? x.ok : 0; }
+function netOf(key){ var x = prog.m[key]; return x ? (x.ok - x.bad) : 0; }
+function mastered(key){ return okOf(key) >= MASTER; }
+
+function bump(key, isCorrect){
+  if (!prog.m[key]) prog.m[key] = {ok:0, bad:0};
+  var x = prog.m[key];
+  if (isCorrect){ x.ok++; prog.score += Math.max(1, 4 - x.bad); prog.correct++; }
+  else { x.bad++; prog.score = Math.max(0, prog.score - 2); }
+  prog.total++;
+  if (prog.score > prog.best) prog.best = prog.score;
+  save();
+}
+
+function record(key, isCorrect){
+  bump(key, isCorrect);
+  if (isCorrect) S.streak++; else S.streak = 0;
+  updateStats();
+}
+
+function levelCleared(i){
+  var L = LEVELS[i];
+  return L.items.every(function(k){ return netOf(k) > 0; });
+}
+function levelDone(i){
+  var L = LEVELS[i];
+  return L.items.every(function(k){ return mastered(k); });
+}
+function totalMastered(){
+  var n = 0;
+  LEVELS.forEach(function(L){ L.items.forEach(function(k){ if (mastered(k)) n++; }); });
+  return n;
+}
+var TOTAL_ITEMS = LEVELS.reduce(function(a,L){ return a + L.items.length; }, 0);
+
+/* ================= LESSONS ================= */
+var lesMem = {};
+function lesSeen(id){ if (lesMem[id]) return true; try{ return localStorage.getItem('tokei-chan-les-' + id) === '1'; }catch(e){ return false; } }
+function lesSet(id){ lesMem[id] = 1; try{ localStorage.setItem('tokei-chan-les-' + id, '1'); }catch(e){} }
+
+var LESSONS = {
+  irreg: { pages: [
+    { title:{en:'Step 1 · The 時 (じ) counter', pt:'Passo 1 · O contador 時 (じ)'},
+      body:{
+        en:'<p>To say the hour, take the number and add <b>時 じ</b>:</p>' +
+          '<table><tr><td>1:00</td><td class="o">いちじ</td><td>5:00</td><td class="o">ごじ</td></tr>' +
+          '<tr><td>2:00</td><td class="o">にじ</td><td>6:00</td><td class="o">ろくじ</td></tr>' +
+          '<tr><td>3:00</td><td class="o">さんじ</td><td>10:00</td><td class="o">じゅうじ</td></tr>' +
+          '<tr><td>8:00</td><td class="o">はちじ</td><td>11:00</td><td class="o">じゅういちじ</td></tr>' +
+          '<tr><td>12:00</td><td class="o">じゅうにじ</td><td>0:00</td><td class="o">れいじ</td></tr></table>' +
+          '<p>Most hours are just number + じ. Easy… except three rebels on the next page.</p>',
+        pt:'<p>Para dizer a hora, pegue o número e junte <b>時 じ</b>:</p>' +
+          '<table><tr><td>1h</td><td class="o">いちじ</td><td>5h</td><td class="o">ごじ</td></tr>' +
+          '<tr><td>2h</td><td class="o">にじ</td><td>6h</td><td class="o">ろくじ</td></tr>' +
+          '<tr><td>3h</td><td class="o">さんじ</td><td>10h</td><td class="o">じゅうじ</td></tr>' +
+          '<tr><td>8h</td><td class="o">はちじ</td><td>11h</td><td class="o">じゅういちじ</td></tr>' +
+          '<tr><td>12h</td><td class="o">じゅうにじ</td><td>0h</td><td class="o">れいじ</td></tr></table>' +
+          '<p>Quase todas são número + じ. Fácil… exceto três rebeldes na próxima página.</p>'
+      }},
+    { title:{en:'Step 2 · The rebels: 4, 7, 9', pt:'Passo 2 · As rebeldes: 4, 7, 9'},
+      body:{
+        en:'<p>Three hours break the pattern. Learn these cold, the game will test them a lot:</p>' +
+          '<table><tr><th>Hour</th><th class="o">Correct</th><th class="x">Trap</th></tr>' +
+          '<tr><td>4</td><td class="o">よじ</td><td class="x">よんじ / しじ</td></tr>' +
+          '<tr><td>7</td><td class="o">しちじ</td><td class="x">ななじ</td></tr>' +
+          '<tr><td>9</td><td class="o">くじ</td><td class="x">きゅうじ</td></tr></table>' +
+          '<p>In real life many Japanese say ななじ and きゅうじ too, but textbooks expect the old forms.</p>',
+        pt:'<p>Três horas quebram o padrão. Aprenda de cor, o jogo vai testá-las bastante:</p>' +
+          '<table><tr><th>Hora</th><th class="o">Correto</th><th class="x">Armadilha</th></tr>' +
+          '<tr><td>4</td><td class="o">よじ</td><td class="x">よんじ / しじ</td></tr>' +
+          '<tr><td>7</td><td class="o">しちじ</td><td class="x">ななじ</td></tr>' +
+          '<tr><td>9</td><td class="o">くじ</td><td class="x">きゅうじ</td></tr></table>' +
+          '<p>Na vida real muitos japoneses também dizem ななじ e きゅうじ, mas os livros didáticos esperam as formas antigas.</p>'
+      }}
+  ]},
+  han: { pages: [
+    { title:{en:'Half past · 〜時半', pt:'E meia · 〜時半'},
+      body:{
+        en:'<p>To say "half past", add <b>半 はん</b> after the hour:</p>' +
+          '<table><tr><td>1:30</td><td class="o">いちじはん</td><td>6:30</td><td class="o">ろくじはん</td></tr>' +
+          '<tr><td>3:30</td><td class="o">さんじはん</td><td>10:30</td><td class="o">じゅうじはん</td></tr></table>' +
+          '<p>There is no separate word for "thirty minutes". 半 means "half" and attaches directly.</p>',
+        pt:'<p>Para dizer "e meia", junte <b>半 はん</b> depois da hora:</p>' +
+          '<table><tr><td>1:30</td><td class="o">いちじはん</td><td>6:30</td><td class="o">ろくじはん</td></tr>' +
+          '<tr><td>3:30</td><td class="o">さんじはん</td><td>10:30</td><td class="o">じゅうじはん</td></tr></table>' +
+          '<p>Não existe palavra separada para "trinta minutos". 半 significa "metade" e se liga diretamente.</p>'
+      }}
+  ]},
+  pun: { pages: [
+    { title:{en:'Minutes in 5-step chunks', pt:'Minutos de 5 em 5'},
+      body:{
+        en:'<p>Count by fives with <b>分 ふん/ぷん</b>:</p>' +
+          '<table><tr><td>5</td><td class="o">ごふん</td><td>25</td><td class="o">にじゅうごふん</td></tr>' +
+          '<tr><td>10</td><td class="o">じゅっぷん</td><td>30</td><td class="o">さんじゅっぷん</td></tr>' +
+          '<tr><td>15</td><td class="o">じゅうごふん</td><td>45</td><td class="o">よんじゅうごふん</td></tr>' +
+          '<tr><td>20</td><td class="o">にじゅっぷん</td><td>50</td><td class="o">ごじゅっぷん</td></tr></table>' +
+          '<p>Notice: 5, 15, 25, 35, 45, 55 end in ごふん. 10, 20, 30, 40, 50 end in 〜ぷん because of the じゅう/にじゅう base.</p>',
+        pt:'<p>Conte de cinco em cinco com <b>分 ふん/ぷん</b>:</p>' +
+          '<table><tr><td>5</td><td class="o">ごふん</td><td>25</td><td class="o">にじゅうごふん</td></tr>' +
+          '<tr><td>10</td><td class="o">じゅっぷん</td><td>30</td><td class="o">さんじゅっぷん</td></tr>' +
+          '<tr><td>15</td><td class="o">じゅうごふん</td><td>45</td><td class="o">よんじゅうごふん</td></tr>' +
+          '<tr><td>20</td><td class="o">にじゅっぷん</td><td>50</td><td class="o">ごじゅっぷん</td></tr></table>' +
+          '<p>Perceba: 5, 15, 25, 35, 45, 55 terminam em ごふん. 10, 20, 30, 40, 50 terminam em 〜ぷん por causa da base じゅう/にじゅう.</p>'
+      }}
+  ]},
+  exact: { pages: [
+    { title:{en:'Exact minutes — the full chart', pt:'Minutos exatos — tabela completa'},
+      body:{
+        en:'<p>All exact-minute readings. The pattern is simple once you see it:</p>' +
+          '<table><tr><th>Min</th><th class="o">Reading</th><th>Min</th><th class="o">Reading</th></tr>' +
+          '<tr><td>1</td><td class="o">いっぷん</td><td>11</td><td class="o">じゅういっぷん</td></tr>' +
+          '<tr><td>2</td><td class="o">にふん</td><td>12</td><td class="o">じゅうにふん</td></tr>' +
+          '<tr><td>3</td><td class="o">さんぷん</td><td>13</td><td class="o">じゅうさんぷん</td></tr>' +
+          '<tr><td>4</td><td class="o">よんぷん</td><td>14</td><td class="o">じゅうよんぷん</td></tr>' +
+          '<tr><td>5</td><td class="o">ごふん</td><td>15</td><td class="o">じゅうごふん</td></tr>' +
+          '<tr><td>6</td><td class="o">ろっぷん</td><td>16</td><td class="o">じゅうろっぷん</td></tr>' +
+          '<tr><td>7</td><td class="o">ななふん</td><td>17</td><td class="o">じゅうななふん</td></tr>' +
+          '<tr><td>8</td><td class="o">はっぷん</td><td>18</td><td class="o">じゅうはっぷん</td></tr>' +
+          '<tr><td>9</td><td class="o">きゅうふん</td><td>19</td><td class="o">じゅうきゅうふん</td></tr>' +
+          '<tr><td>10</td><td class="o">じゅっぷん</td><td>20</td><td class="o">にじゅっぷん</td></tr></table>' +
+          '<p>Rule: unit digit decides ぷん vs ふん. 1,3,4,6,8 → ぷん. 2,5,7,9 → ふん.</p>',
+        pt:'<p>Todas as leituras de minutos exatos. O padrão é simples quando você vê:</p>' +
+          '<table><tr><th>Min</th><th class="o">Leitura</th><th>Min</th><th class="o">Leitura</th></tr>' +
+          '<tr><td>1</td><td class="o">いっぷん</td><td>11</td><td class="o">じゅういっぷん</td></tr>' +
+          '<tr><td>2</td><td class="o">にふん</td><td>12</td><td class="o">じゅうにふん</td></tr>' +
+          '<tr><td>3</td><td class="o">さんぷん</td><td>13</td><td class="o">じゅうさんぷん</td></tr>' +
+          '<tr><td>4</td><td class="o">よんぷん</td><td>14</td><td class="o">じゅうよんぷん</td></tr>' +
+          '<tr><td>5</td><td class="o">ごふん</td><td>15</td><td class="o">じゅうごふん</td></tr>' +
+          '<tr><td>6</td><td class="o">ろっぷん</td><td>16</td><td class="o">じゅうろっぷん</td></tr>' +
+          '<tr><td>7</td><td class="o">ななふん</td><td>17</td><td class="o">じゅうななふん</td></tr>' +
+          '<tr><td>8</td><td class="o">はっぷん</td><td>18</td><td class="o">じゅうはっぷん</td></tr>' +
+          '<tr><td>9</td><td class="o">きゅうふん</td><td>19</td><td class="o">じゅうきゅうふん</td></tr>' +
+          '<tr><td>10</td><td class="o">じゅっぷん</td><td>20</td><td class="o">にじゅっぷん</td></tr></table>' +
+          '<p>Regra: o dígito das unidades decide ぷん vs ふん. 1,3,4,6,8 → ぷん. 2,5,7,9 → ふん.</p>'
+      }}
+  ]},
+  ampm: { pages: [
+    { title:{en:'AM / PM · ごぜん・ごご', pt:'AM / PM · ごぜん・ごご'},
+      body:{
+        en:'<p>Japanese uses two 12-hour blocks:</p>' +
+          '<table><tr><td>morning</td><td class="o">ごぜん</td><td>gozen</td></tr>' +
+          '<tr><td>afternoon / evening</td><td class="o">ごご</td><td>gogo</td></tr></table>' +
+          '<p>They come <b>before</b> the time: ごご 3:00 = 3 PM. The 12-hour clock resets at noon and midnight.</p>',
+        pt:'<p>O japonês usa dois blocos de 12 horas:</p>' +
+          '<table><tr><td>manhã</td><td class="o">ごぜん</td><td>gozen</td></tr>' +
+          '<tr><td>tarde / noite</td><td class="o">ごご</td><td>gogo</td></tr></table>' +
+          '<p>Eles vêm <b>antes</b> da hora: ごご 3:00 = 15h. O relógio de 12 horas reinicia ao meio-dia e à meia-noite.</p>'
+      }}
+  ]}
+};
+
+function renderLessonPage(lesId, idx){
+  var pages = LESSONS[lesId].pages;
+  var p = pages[idx];
+  var last = idx === pages.length - 1;
+  var dots = '';
+  for (var i = 0; i < pages.length; i++) dots += '<span class="dot' + (i === idx ? ' on' : '') + '"></span>';
+  $('lessonPanel').innerHTML = '<h2>' + p.title[lang] + '</h2>' + p.body[lang] +
+    '<div class="lesnav"><div class="dots">' + dots + '</div>' +
+    '<button class="btn btn-primary" id="btnLessonOk">' + (last ? T('lesStart') : T('lesNext')) + '</button></div>';
+  $('btnLessonOk').addEventListener('click', function(){
+    if (last){ $('lessonOv').classList.add('hidden'); }
+    else { renderLessonPage(lesId, idx + 1); }
+  });
+}
+function maybeLesson(){
+  var L = LEVELS[S.level];
+  if (!L.lesson || lesSeen(L.lesson)) return;
+  lesSet(L.lesson);
+  renderLessonPage(L.lesson, 0);
+  $('lessonOv').classList.remove('hidden');
+}
+
+/* ================= UI HELPERS ================= */
+function $(id){ return document.getElementById(id); }
+
+var STR = {
+  en: {
+    modeMC: 'LISTEN, THEN TAP THE MATCHING CLOCK',
+    modeLMC: 'LISTEN, THEN SET THE CLOCK',
+    modeSet: 'READ IT, THEN SET THE CLOCK',
+    setTime: 'SET TIME',
+    minLbl: '分 · MINUTES',
+    minChodo: '(ちょうど · :00)',
+    minHan: '(はん · :30)',
+    next: 'Next →',
+    check: 'Check',
+    skip: 'Skip · わからない',
+    correct: 'Nice one!',
+    wrong: 'Not quite.',
+    reveal: 'It was:',
+    lesNext: 'Next →',
+    lesStart: 'Start playing →',
+    pastePrompt: 'Paste your Tokei-chan save code here:',
+    codePaste: 'Paste save code',
+    codeShow: 'Your save code, copy it and keep it safe:',
+    importBtn: 'Import',
+    cancelBtn: 'Cancel',
+    importErr: 'That does not look like a Tokei-chan save.',
+    noSave: 'Saving is blocked in this browser, so progress resets when you reload. Export your save often to keep it!'
+  },
+  pt: {
+    modeMC: 'OUÇA E TOQUE NO RELÓGIO CORRETO',
+    modeLMC: 'OUÇA E AJUSTE O RELÓGIO',
+    modeSet: 'LEIA E AJUSTE O RELÓGIO',
+    setTime: 'AJUSTAR HORA',
+    minLbl: '分 · MINUTOS',
+    minChodo: '(ちょうど · :00)',
+    minHan: '(はん · :30)',
+    next: 'Próximo →',
+    check: 'Verificar',
+    skip: 'Pular · Não sei',
+    correct: 'Muito bem!',
+    wrong: 'Quase.',
+    reveal: 'Era:',
+    lesNext: 'Próximo →',
+    lesStart: 'Começar →',
+    pastePrompt: 'Cole aqui o seu código de save do Tokei-chan:',
+    codePaste: 'Colar código de save',
+    codeShow: 'Seu código de save, copie e guarde em segurança:',
+    importBtn: 'Importar',
+    cancelBtn: 'Cancelar',
+    importErr: 'Isso não parece um save do Tokei-chan.',
+    noSave: 'O salvamento está bloqueado neste navegador, então o progresso zera ao recarregar. Exporte seu save com frequência para guardá-lo!'
+  }
+};
+
+function T(key){ return STR[lang][key] || key; }
+var lang = 'en';
+
+function setLang(l){
+  lang = l;
+  document.querySelectorAll('[data-en]').forEach(function(el){
+    el.textContent = el.getAttribute('data-' + lang);
+  });
+  updateStats();
+  if (S.answered) showFeedback(S.correct, '');
+}
+
+function updateStats(){
+  $('stStreak').innerHTML = '🔥 ' + S.streak;
+  $('stScore').innerHTML = '⭐ ' + prog.score;
+  $('stBest').innerHTML = '🏆 ' + prog.best;
+  $('stProgress').innerHTML = '📈 ' + totalMastered() + '/' + TOTAL_ITEMS;
+  var L = LEVELS[S.level];
+  var cleared = L.items.filter(function(k){ return mastered(k); }).length;
+  $('progBar').value = cleared; $('progBar').max = L.items.length;
+}
+
+function showFeedback(ok, html){
+  var fb = $('feedback');
+  fb.className = 'feedback show ' + (ok ? 'f-ok' : 'f-bad');
+  var msg = ok ? T('correct') : T('wrong');
+  var bonus = '';
+  if (ok && S.streak >= 3) bonus = ' <span style="opacity:.7">(' + S.streak + ' streak)</span>';
+  fb.innerHTML = '<span class="feedback-msg">' + msg + (ok ? ' +' + Math.max(1, 4 - (prog.m[S.key] ? prog.m[S.key].bad : 0)) : ' -2') + ' ⚡' + bonus + '</span>' + (html ? '<div style="margin-top:6px;font-size:.9rem">' + html + '</div>' : '');
+}
+
+/* ================= SOUND ================= */
+var actx = null, soundOn = true;
+try{ soundOn = localStorage.getItem('tokei-chan-sound') !== 'off'; }catch(e){}
+function chime(kind){
+  if (!soundOn) return;
+  try{
+    if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+    var o = actx.createOscillator(), g = actx.createGain();
+    o.connect(g); g.connect(actx.destination);
+    if (kind === 'ok'){ o.type='sine'; o.frequency.setValueAtTime(880, actx.currentTime); o.frequency.exponentialRampToValueAtTime(440, actx.currentTime+0.3); g.gain.setValueAtTime(0.15, actx.currentTime); g.gain.exponentialRampToValueAtTime(0.001, actx.currentTime+0.3); }
+    else if (kind === 'bad'){ o.type='sawtooth'; o.frequency.setValueAtTime(200, actx.currentTime); o.frequency.linearRampToValueAtTime(150, actx.currentTime+0.2); g.gain.setValueAtTime(0.1, actx.currentTime); g.gain.exponentialRampToValueAtTime(0.001, actx.currentTime+0.2); }
+    else { o.type='sine'; o.frequency.setValueAtTime(660, actx.currentTime); g.gain.setValueAtTime(0.1, actx.currentTime); g.gain.exponentialRampToValueAtTime(0.001, actx.currentTime+0.15); }
+    o.start(); o.stop(actx.currentTime+0.35);
+  }catch(e){}
+}
+
+function speakJP(text){
+  if (!ttsOK || !soundOn || !jpVoice) return;
+  try{
+    speechSynthesis.cancel();
+    var u = new SpeechSynthesisUtterance(text);
+    u.lang = 'ja-JP'; u.voice = jpVoice; u.rate = 0.9;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+var ttsOK = false, jpVoice = null;
+function initTTS(){
+  if (!window.speechSynthesis) return;
+  var pick = function(){
+    var v = speechSynthesis.getVoices().filter(function(x){ return x.lang.indexOf('ja') === 0; });
+    if (v.length){ jpVoice = v[0]; ttsOK = true; }
+  };
+  pick();
+  speechSynthesis.onvoiceschanged = pick;
+}
+initTTS();
+
+function speakAns(){ speakJP(toKatakana(S.ans.k)); }
+function drawSpeaker(){
+  $('clockWrap').innerHTML = '<button class="speaker" id="btnSpeak" aria-label="play">🔊<span>きく</span></button>';
+  $('btnSpeak').addEventListener('click', speakAns);
+}
+
+function toKatakana(s){
+  var map = {あ:'ア',い:'イ',う:'ウ',え:'エ',お:'オ',か:'カ',き:'キ',く:'ク',け:'ケ',こ:'コ',さ:'サ',し:'シ',す:'ス',せ:'セ',そ:'ソ',た:'タ',ち:'チ',つ:'ツ',て:'テ',と:'ト',な:'ナ',に:'ニ',ぬ:'ヌ',ね:'ネ',の:'ノ',は:'ハ',ひ:'ヒ',ふ:'フ',へ:'ヘ',ほ:'ホ',ま:'マ',み:'ミ',む:'ム',め:'メ',も:'モ',や:'ヤ',ゆ:'ユ',よ:'ヨ',ら:'ラ',り:'リ',る:'ル',れ:'レ',ろ:'ロ',わ:'ワ',を:'ヲ',ん:'ン',が:'ガ',ぎ:'ギ',ぐ:'グ',げ:'ゲ',ご:'ゴ',ざ:'ザ',じ:'ジ',ず:'ズ',ぜ:'ゼ',ぞ:'ゾ',だ:'ダ',ぢ:'ヂ',づ:'ヅ',で:'デ',ど:'ド',ば:'バ',び:'ビ',ぶ:'ブ',べ:'ベ',ぼ:'ボ',ぱ:'パ',ぴ:'ピ',ぷ:'プ',ぺ:'ペ',ぽ:'ポ',ゃ:'ャ',ゅ:'ュ',ょ:'ョ',っ:'ッ',ー:'ー','・':'・',' ':' ',0:'0',1:'1',2:'2',3:'3',4:'4',5:'5',6:'6',7:'7',8:'8',9:'9',':':':'};
+  return s.split('').map(function(c){ return map[c] || c; }).join('');
+}
+
+/* ================= CLOCK SVG ================= */
+function clockSVG(h, m, ap){
+  var cx = 120, cy = 120, r = 100;
+  var ha = (h % 12) * 30 + m * 0.5 - 90;
+  var ma = m * 6 - 90;
+  var s = '<svg viewBox="0 0 240 240" role="img" aria-label="clock">';
+  s += '<defs><radialGradient id="faceGrad" cx="50%" cy="42%" r="68%"><stop offset="0%" stop-color="#fffdfd"/><stop offset="72%" stop-color="#fff5f8"/><stop offset="100%" stop-color="#fdeef4"/></radialGradient></defs>';
+  s += '<circle cx="120" cy="120" r="112" fill="url(#faceGrad)" stroke="#ecc9d3" stroke-width="6"/>';
+  s += '<circle cx="120" cy="120" r="99" fill="none" stroke="#f6cfdd" stroke-width="4.5" stroke-linecap="round" stroke-dasharray="0.1 11.7"/>';
+  s += '<path d="M0 -9 C1 -2 2 -1 9 0 C2 1 1 2 0 9 C-1 2 -2 1 -9 0 C-2 -1 -1 -2 0 -9 Z" transform="translate(56,58) scale(.85)" fill="#e8c66b"/>';
+  s += '<path d="M0 -9 C1 -2 2 -1 9 0 C2 1 1 2 0 9 C-1 2 -2 1 -9 0 C-2 -1 -1 -2 0 -9 Z" transform="translate(186,52) scale(.6)" fill="#f0a9c0"/>';
+  s += '<g transform="translate(120,13)"><ellipse cx="-10" cy="1" rx="11" ry="6.5" transform="rotate(-28 -10 1)" fill="#f3a7bd"/><ellipse cx="10" cy="1" rx="11" ry="6.5" transform="rotate(28 10 1)" fill="#f3a7bd"/><circle cx="0" cy="0" r="4.6" fill="#e2799b"/><circle cx="-1.2" cy="-1.4" r="1.4" fill="#fff" opacity=".8"/></g>';
+  for (var i = 1; i <= 12; i++){
+    var a = i * 30 - 90, xr = cx + r * Math.cos(a * Math.PI/180), yr = cy + r * Math.sin(a * Math.PI/180);
+    s += '<text x="' + xr + '" y="' + (yr + 5) + '" text-anchor="middle" font-size="14" fill="#9e7a8a" font-weight="700">' + i + '</text>';
+  }
+  s += '<line x1="' + cx + '" y1="' + cy + '" x2="' + (cx + 62 * Math.cos(ha * Math.PI/180)) + '" y2="' + (cy + 62 * Math.sin(ha * Math.PI/180)) + '" stroke="#c75b77" stroke-width="5" stroke-linecap="round"/>';
+  s += '<line x1="' + cx + '" y1="' + cy + '" x2="' + (cx + 82 * Math.cos(ma * Math.PI/180)) + '" y2="' + (cy + 82 * Math.sin(ma * Math.PI/180)) + '" stroke="#e2799b" stroke-width="3.5" stroke-linecap="round"/>';
+  s += '<circle cx="' + cx + '" cy="' + cy + '" r="5" fill="#c75b77"/>';
+  // Kawaii face
+  var eyeY = 152, cheekY = 168;
+  s += '<path d="M88 ' + (eyeY-4) + ' Q96 ' + (eyeY-10) + ' 104 ' + (eyeY-4) + '" stroke="#2c3240" stroke-width="2.5" fill="none" stroke-linecap="round"/>';
+  s += '<path d="M136 ' + (eyeY-4) + ' Q144 ' + (eyeY-10) + ' 152 ' + (eyeY-4) + '" stroke="#2c3240" stroke-width="2.5" fill="none" stroke-linecap="round"/>';
+  s += '<circle cx="99" cy="' + eyeY + '" r="5" fill="#2c3240"/>';
+  s += '<circle cx="141" cy="' + eyeY + '" r="5" fill="#2c3240"/>';
+  s += '<circle cx="100.6" cy="' + (eyeY-1.6) + '" r="1.7" fill="#fff"/>';
+  s += '<circle cx="142.6" cy="' + (eyeY-1.6) + '" r="1.7" fill="#fff"/>';
+  s += '<path d="M108 ' + (cheekY+2) + ' Q120 ' + (cheekY+10) + ' 132 ' + (cheekY+2) + '" stroke="#2c3240" stroke-width="2.5" fill="none" stroke-linecap="round"/>';
+  s += '<circle cx="88" cy="' + cheekY + '" r="7" fill="#f3b8c6" opacity="0.75"/>';
+  s += '<circle cx="88" cy="' + cheekY + '" r="3" fill="#ec8fae" opacity="0.55"/>';
+  s += '<circle cx="152" cy="' + cheekY + '" r="7" fill="#f3b8c6" opacity="0.75"/>';
+  s += '<circle cx="152" cy="' + cheekY + '" r="3" fill="#ec8fae" opacity="0.55"/>';
+  if (ap){
+    s += '<text x="120" y="210" text-anchor="middle" font-size="16" fill="#c75b77" font-weight="800">' + AP[ap].en + '</text>';
+  }
+  s += '</svg>';
+  return s;
+}
+
+function clockTileSVG(h, m){
+  var cx = 60, cy = 60, r = 50;
+  var ha = (h % 12) * 30 + m * 0.5 - 90;
+  var ma = m * 6 - 90;
+  var s = '<svg viewBox="0 0 120 120">';
+  s += '<circle cx="60" cy="60" r="56" fill="#fff" stroke="#ecc9d3" stroke-width="3"/>';
+  for (var i = 1; i <= 12; i++){
+    var a = i * 30 - 90, xr = cx + r * Math.cos(a * Math.PI/180), yr = cy + r * Math.sin(a * Math.PI/180);
+    s += '<text x="' + xr + '" y="' + (yr + 3) + '" text-anchor="middle" font-size="9" fill="#9e7a8a">' + i + '</text>';
+  }
+  s += '<line x1="' + cx + '" y1="' + cy + '" x2="' + (cx + 30 * Math.cos(ha * Math.PI/180)) + '" y2="' + (cy + 30 * Math.sin(ha * Math.PI/180)) + '" stroke="#c75b77" stroke-width="3" stroke-linecap="round"/>';
+  s += '<line x1="' + cx + '" y1="' + cy + '" x2="' + (cx + 40 * Math.cos(ma * Math.PI/180)) + '" y2="' + (cy + 40 * Math.sin(ma * Math.PI/180)) + '" stroke="#e2799b" stroke-width="2" stroke-linecap="round"/>';
+  s += '<circle cx="' + cx + '" cy="' + cy + '" r="3" fill="#c75b77"/>';
+  s += '</svg>';
+  return s;
+}
+
+/* ================= LEVEL / MODE ================= */
+function levelUnlocked(i){ return i === 0 || levelCleared(i-1); }
+
+function renderLevels(){
+  var row = $('levelRow'); row.innerHTML = '';
+  LEVELS.forEach(function(L, i){
+    var b = document.createElement('button');
+    b.className = 'lv';
+    if (!levelUnlocked(i)) b.classList.add('locked');
+    if (i === S.level) b.classList.add('current');
+    if (levelDone(i)) b.classList.add('done');
+    b.innerHTML = (levelUnlocked(i) ? (levelDone(i) ? '✓ ' : '') : '🔒 ') + L.id + '. ' + L.name + ' <small>' + L.label[lang] + '</small>';
+    if (levelUnlocked(i)) b.addEventListener('click', function(){ S.level = i; newRound(); });
+    row.appendChild(b);
+  });
+}
+
+function renderStars(){
+  var n = Math.min(5, Math.floor(okOf(S.key)/2));
+  var s = '';
+  for (var i=0;i<5;i++) s += i < n ? '★' : '☆';
+  $('itemStars').textContent = s;
+}
+
+function pickMode(){
+  var L = LEVELS[S.level];
+  if (L.id === 1) return 'mc';
+  if (L.id === 6) return 'set';
+  return Math.random() < 0.6 ? 'lmc' : 'mc';
+}
+
+/* ================= ITEM SELECTION ================= */
+function pickItem(){
+  var L = LEVELS[S.level];
+  var pool = L.items.slice();
+  var weights = pool.map(function(k){ return itemWeight(k) / (1 + netOf(k)); });
+  var total = weights.reduce(function(a,b){ return a+b; }, 0);
+  var r = Math.random() * total;
+  for (var i = 0; i < pool.length; i++){
+    r -= weights[i];
+    if (r <= 0) return pool[i];
+  }
+  return pool[pool.length - 1];
+}
+
+/* ================= ROUND ================= */
+function newRound(){
+  S.answered = false; S.correct = false;
+  var L = LEVELS[S.level];
+  S.key = pickItem();
+  S.cur = itemTime(S.key);
+  S.mode = pickMode();
+  S.ans = buildAns(S.cur);
+  maybeLesson();
+  updateStats(); renderStars();
+  if (S.mode === 'mc') renderMC();
+  else if (S.mode === 'lmc') renderLMC();
+  else renderSet();
+}
+
+function buildAns(t){
+  if (S.mode === 'mc') return {h:t.h, m:t.m, ap:t.ap, k: timeKana(t.h, t.m, t.ap), r: timeRomaji(t.h, t.m, t.ap)};
+  return {h:t.h, m:t.m, ap:t.ap};
+}
+
+/* ================= MC: listen + pick ================= */
+function renderMC(){
+  $('modeTitle').textContent = T('modeMC');
+  $('clockWrap').innerHTML = clockSVG(S.cur.h, S.cur.m, S.cur.ap);
+  drawSpeaker();
+  var area = $('answerArea'); area.innerHTML = '';
+  var opts = clockDistractors(S.cur);
+  opts.splice(drawPos(opts.length + 1), 0, S.ans);
+  opts.forEach(function(o, i){
+    var b = document.createElement('button');
+    b.className = 'tile clock-tile';
+    b.innerHTML = clockTileSVG(o.h, o.m);
+    b.addEventListener('click', function(){ if (S.answered) return; checkMC(o, b, opts); });
+    area.appendChild(b);
+  });
+  $('btnMain').textContent = T('skip');
+  $('btnMain').className = 'btn';
+  $('btnMain').onclick = function(){ if (!S.answered) skip(); };
+  $('btnSkip').classList.add('hidden');
+  $('feedback').classList.remove('show');
+}
+
+function clockDistractors(cur){
+  var out = [], used = {};
+  used[cur.h + ':' + cur.m] = 1;
+  while (out.length < 2){
+    var dh = 1 + Math.floor(Math.random() * 12);
+    var dm = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55][Math.floor(Math.random() * 12)];
+    var k = dh + ':' + dm;
+    if (!used[k]){ used[k] = 1; out.push({h:dh, m:dm}); }
+  }
+  return out;
+}
+
+function checkMC(o, btn, all){
+  S.answered = true;
+  var ok = (o.h === S.ans.h && o.m === S.ans.m && o.ap === S.ans.ap);
+  S.correct = ok;
+  record(S.key, ok);
+  chime(ok ? 'ok' : 'bad');
+  btn.classList.add(ok ? 'correct' : 'wrong');
+  all.forEach(function(b, i){ if (all[i] !== o) all[i].classList.add('ghost'); });
+  var html = '';
+  if (!ok) html = '<div>' + T('reveal') + ' <b>' + S.ans.k + '</b> <span style="opacity:.7">' + S.ans.r + '</span></div>';
+  showFeedback(ok, html);
+  $('btnMain').textContent = T('next');
+  $('btnMain').className = 'btn btn-primary';
+  $('btnMain').onclick = newRound;
+  maybeDone();
+}
+
+/* ================= LMC: listen + set ================= */
+function renderLMC(){
+  $('modeTitle').textContent = T('modeLMC');
+  $('clockWrap').innerHTML = clockSVG(S.cur.h, S.cur.m, S.cur.ap);
+  drawSpeaker();
+  var area = $('answerArea'); area.innerHTML = '';
+  var opts = lmcDistractors(S.cur);
+  opts.splice(drawPos(opts.length + 1), 0, S.ans);
+  opts.forEach(function(o){
+    var b = document.createElement('button');
+    b.className = 'tile';
+    b.innerHTML = '<div>' + o.k + '</div><span class="sub">' + o.r + '</span>';
+    b.addEventListener('click', function(){ if (S.answered) return; checkLMC(o, b, opts); });
+    area.appendChild(b);
+  });
+  $('btnMain').textContent = T('skip');
+  $('btnMain').className = 'btn';
+  $('btnMain').onclick = function(){ if (!S.answered) skip(); };
+  $('btnSkip').classList.add('hidden');
+  $('feedback').classList.remove('show');
+}
+
+function lmcDistractors(cur){
+  var out = [], used = {};
+  used[cur.h + ':' + cur.m + ':' + (cur.ap||'')] = 1;
+  while (out.length < 2){
+    var dh = 1 + Math.floor(Math.random() * 12);
+    var dm = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55][Math.floor(Math.random() * 12)];
+    var dap = cur.ap ? (Math.random() < 0.5 ? 'gozen' : 'gogo') : null;
+    var k = dh + ':' + dm + ':' + (dap||'');
+    if (!used[k]){ used[k] = 1; out.push({h:dh, m:dm, ap:dap, k: timeKana(dh,dm,dap), r: timeRomaji(dh,dm,dap)}); }
+  }
+  return out;
+}
+
+function checkLMC(o, btn, all){
+  S.answered = true;
+  var ok = (o.h === S.ans.h && o.m === S.ans.m && o.ap === S.ans.ap);
+  S.correct = ok;
+  record(S.key, ok);
+  chime(ok ? 'ok' : 'bad');
+  btn.classList.add(ok ? 'correct' : 'wrong');
+  all.forEach(function(b){ if (b !== btn) b.classList.add('ghost'); });
+  var html = '';
+  if (!ok) html = '<div>' + T('reveal') + ' <b>' + S.ans.k + '</b> <span style="opacity:.7">' + S.ans.r + '</span></div>';
+  showFeedback(ok, html);
+  $('btnMain').textContent = T('next');
+  $('btnMain').className = 'btn btn-primary';
+  $('btnMain').onclick = newRound;
+  maybeDone();
+}
+
+/* ================= SET: read + set clock ================= */
+function renderSet(first){
+  if (first !== false) first = true;
+  var L = LEVELS[S.level];
+  $('modeTitle').textContent = T('modeSet');
+  $('clockWrap').innerHTML = clockSVG(S.setH, S.setM, S.setAp);
+  var area = $('answerArea'); area.innerHTML = '';
+
+  // Hour chips
+  var hrLabel = document.createElement('div');
+  hrLabel.style.cssText = 'font-size:.82rem;font-weight:800;color:var(--muted);margin:4px 0';
+  hrLabel.textContent = '時 · HOUR — tap or type';
+  area.appendChild(hrLabel);
+  var hrRow = document.createElement('div'); hrRow.className = 'chip-row';
+  for (var h = 1; h <= 12; h++){
+    var b = document.createElement('button');
+    b.className = 'chip' + (h === S.setH ? ' sel' : '');
+    b.textContent = h;
+    b.dataset.h = h;
+    b.addEventListener('click', function(){ setHour(parseInt(this.dataset.h,10)); });
+    hrRow.appendChild(b);
+  }
+  area.appendChild(hrRow);
+
+  // Minutes
+  var ctl = document.createElement('div');
+  var lbl = document.createElement('div');
+  lbl.style.cssText = 'font-size:.82rem;font-weight:800;color:var(--muted);margin:10px 0 4px';
+  var minLabel = T('minLbl') + ' ' + (S.cur.m === 0 ? T('minChodo') : S.cur.m === 30 ? T('minHan') : '');
+  lbl.textContent = minLabel;
+  var mr = document.createElement('div'); mr.className = 'min-row';
+  var lock = (S.cur.m === 0 || S.cur.m === 30);
+  if (lock){
+    var fixedTxt = document.createElement('div');
+    fixedTxt.className = 'min-fixed';
+    fixedTxt.textContent = S.cur.m === 0 ? '00' : ':30';
+    mr.appendChild(fixedTxt);
+  } else {
+    mr.innerHTML = '<button class="stepbtn" id="mMinus">−</button><input class="min-val" id="minVal" type="text" inputmode="numeric" maxlength="2"><button class="stepbtn" id="mPlus">+</button>';
+  }
+  ctl.appendChild(lbl); ctl.appendChild(mr);
+  area.appendChild(ctl);
+
+  var readout = document.createElement('div');
+  readout.className = 'readout';
+  readout.id = 'readout';
+  area.appendChild(readout);
+
+  S.setH = S.setH || 1;
+  if (lock) S.setM = S.cur.m;
+  else if (first) S.setM = 0;
+
+  var mMinusEl = $('mMinus'), mPlusEl = $('mPlus'), minValEl = $('minVal');
+  if (mMinusEl) mMinusEl.addEventListener('click', function(){ stepMin(-L.step); });
+  if (mPlusEl) mPlusEl.addEventListener('click', function(){ stepMin(L.step); });
+  if (minValEl) minValEl.disabled = lock;
+  if (minValEl){
+    minValEl.addEventListener('input', function(){
+      if (S.answered || $('minVal').disabled){ drawSetClock(); return; }
+      var v = parseInt(this.value, 10);
+      if (!isNaN(v) && v >= 0 && v <= 59){ S.setM = v; }
+      drawSetClock();
+    });
+    minValEl.addEventListener('keydown', inpEnter);
+  }
+
+  drawSetClock();
+
+  $('btnMain').textContent = T('check');
+  $('btnMain').className = 'btn btn-primary';
+  $('btnMain').onclick = checkSet;
+  $('btnSkip').classList.remove('hidden');
+  $('feedback').classList.remove('show');
+}
+
+function inpEnter(e){ if (e.key === 'Enter'){ e.preventDefault(); checkSet(); } }
+
+function drawSetClock(){
+  $('clockWrap').innerHTML = clockSVG(S.setH, S.setM, S.setAp);
+  var mm = (S.setM < 10 ? '0' : '') + S.setM;
+  var mv = $('minVal');
+  if (mv && document.activeElement !== mv) mv.value = mm;
+  $('readout').innerHTML = (S.cur.ap ? AP[S.setAp].en + ' ' : '') + S.setH + '<b>:</b>' + mm + '<small>' + T('setTime') + '</small>';
+}
+
+function setHour(h){ S.setH = h; drawSetClock(); }
+function stepMin(d){
+  var L = LEVELS[S.level];
+  var mv = $('minVal');
+  if (!mv) return;
+  S.setM = Math.max(0, Math.min(59, S.setM + d));
+  mv.value = (S.setM < 10 ? '0' : '') + S.setM;
+  drawSetClock();
+}
+
+function checkSet(){
+  if (S.answered) return;
+  S.answered = true;
+  var ok = (S.setH === S.ans.h && S.setM === S.ans.m && S.setAp === S.ans.ap);
+  S.correct = ok;
+  record(S.key, ok);
+  chime(ok ? 'ok' : 'bad');
+  var html = '';
+  if (!ok) html = '<div>' + T('reveal') + ' <b>' + timeKana(S.ans.h, S.ans.m, S.ans.ap) + '</b></div>';
+  showFeedback(ok, html);
+  $('btnMain').textContent = T('next');
+  $('btnMain').onclick = newRound;
+  maybeDone();
+}
+
+/* ================= SKIP & DONE ================= */
+function skip(){
+  S.answered = true; S.correct = false;
+  record(S.key, false);
+  chime('bad');
+  var html = '<div>' + T('reveal') + ' <b>' + S.ans.k + '</b> <span style="opacity:.7">' + S.ans.r + '</span></div>';
+  showFeedback(false, html);
+  $('btnMain').textContent = T('next');
+  $('btnMain').className = 'btn btn-primary';
+  $('btnMain').onclick = newRound;
+}
+
+function maybeDone(){
+  if (doneShown) return;
+  var L = LEVELS[S.level];
+  if (levelDone(S.level)){
+    doneShown = true;
+    $('doneMsg').innerHTML = T('correct') + '<br><small>' + L.name + ' — ' + L.label[lang] + '</small>';
+    $('doneOv').classList.remove('hidden');
+  }
+}
+
+$('btnNextLevel').addEventListener('click', function(){
+  $('doneOv').classList.add('hidden');
+  if (S.level + 1 < LEVELS.length){
+    S.level++; newRound();
+  } else {
+    newRound();
+  }
+});
+$('btnStay').addEventListener('click', function(){ $('doneOv').classList.add('hidden'); });
+
+/* ================= BALANCED POSITIONS ================= */
+var posBags = {};
+function drawPos(n){
+  var bag = posBags[n] || (posBags[n] = []);
+  if (!bag.length){
+    for (var i = 0; i < n; i++) bag.push(i);
+    for (var i2 = bag.length - 1; i2 > 0; i2--){
+      var j = Math.floor(Math.random() * (i2 + 1));
+      var t = bag[i2]; bag[i2] = bag[j]; bag[j] = t;
+    }
+  }
+  return bag.pop();
+}
+
+/* ================= SAVE SYSTEM ================= */
+function storageOK(){
+  try{ var t = 'tokei-chan-probe'; localStorage.setItem(t, '1'); localStorage.removeItem(t); return true; }catch(e){ return false; }
+}
+function gatherStore(){
+  var store = {};
+  try{
+    for (var i = 0; i < localStorage.length; i++){
+      var k = localStorage.key(i);
+      if (k && k.indexOf('tokei-chan') === 0) store[k] = localStorage.getItem(k);
+    }
+  }catch(e){}
+  try{ store[KEY] = JSON.stringify(prog); }catch(e){}
+  for (var id in lesMem){ store['tokei-chan-les-' + id] = '1'; }
+  return store;
+}
+function applyStore(store){
+  var n = 0;
+  if (!store || typeof store !== 'object') return 0;
+  try{
+    Object.keys(store).forEach(function(k){
+      if (k.indexOf('tokei-chan') === 0){ localStorage.setItem(k, store[k]); n++; }
+    });
+  }catch(e){}
+  return n;
+}
+function applyStoreLive(store){
+  var n = 0;
+  if (!store || typeof store !== 'object') return 0;
+  if (typeof store[KEY] === 'string'){ prog = JSON.parse(store[KEY]); n++; }
+  Object.keys(store).forEach(function(k){
+    var m = k.match(/^tokei-chan-les-(.+)$/);
+    if (m){ lesMem[m[1]] = 1; n++; }
+  });
+  return n;
+}
+function applyStoreSmart(data){
+  if (!applyStore(data.store)) throw new Error('empty');
+  var stuck = false;
+  try{
+    stuck = Object.keys(data.store).every(function(k){ return localStorage.getItem(k) === data.store[k]; });
+  }catch(e){ stuck = false; }
+  if (stuck){ location.reload(); return; }
+  applyStoreLive(data.store);
+  if (!levelUnlocked(S.level)) S.level = 0;
+  doneShown = false;
+  renderLevels(); updateStats(); newRound();
+}
+
+function saveCode(){
+  var store = gatherStore();
+  var data = { app: 'tokei-chan', v: 1, when: new Date().toISOString(), store: store };
+  var raw = JSON.stringify(data);
+  return btoa(unescape(encodeURIComponent(raw)));
+}
+
+function parseSaveCode(code){
+  var raw = decodeURIComponent(escape(atob(code)));
+  return JSON.parse(raw);
+}
+
+function exportSave(){
+  var data = { app: 'tokei-chan', v: 1, when: new Date().toISOString(), store: gatherStore() };
+  var blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'tokei-chan-save.json';
+  document.body.appendChild(a); a.click(); a.remove();
+}
+
+function fallbackCopy(text){
+  try{
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+  }catch(e){ openCodeOv('show', text); }
+}
+
+function openCodeOv(mode, code){
+  $('codeOv').classList.remove('hidden');
+  $('codeTitle').textContent = T(mode === 'show' ? 'codeShow' : 'codePaste');
+  $('codeTa').value = code || '';
+  $('codeTa').readOnly = (mode === 'show');
+  $('btnCodeOk').textContent = T('importBtn');
+  $('btnCodeCancel').textContent = T('cancelBtn');
+  if (mode === 'show'){ $('btnCodeOk').classList.add('hidden'); }
+  else { $('btnCodeOk').classList.remove('hidden'); }
+  setTimeout(function(){ try{ $('codeTa').focus(); if (mode === 'show') $('codeTa').select(); }catch(e){} }, 60);
+}
+
+function pasteSaveCode(){
+  openCodeOv('paste', '');
+}
+
+$('btnCodeOk').addEventListener('click', function(){
+  try{
+    applyStoreSmart(parseSaveCode($('codeTa').value));
+    $('codeOv').classList.add('hidden');
+  }catch(e){
+    $('codeTitle').textContent = T('importErr');
+  }
+});
+$('btnCodeCancel').addEventListener('click', function(){
+  $('codeOv').classList.add('hidden');
+});
+
+/* ================= EVENTS ================= */
+$('btnExport').addEventListener('click', function(){
+  var code = saveCode();
+  fallbackCopy(code);
+});
+
+$('btnImport').addEventListener('click', function(){ $('fileImport').click(); });
+$('fileImport').addEventListener('change', function(e){
+  var file = e.target.files[0];
+  if (!file) return;
+  var rd = new FileReader();
+  rd.onload = function(){
+    try{
+      applyStoreSmart(JSON.parse(rd.result));
+    }catch(err){ alert(T('importErr')); }
+  };
+  try{ rd.readAsText(file); }catch(err){ alert(T('importErr')); }
+  $('fileImport').value = '';
+});
+
+$('btnPasteCode').addEventListener('click', pasteSaveCode);
+
+$('btnReset').addEventListener('click', function(){
+  if (!window.confirm('Reset all progress?')) return;
+  prog = blankProg(); lesMem = {}; S.streak = 0; S.level = 0; doneShown = false;
+  resetArmed = false;
+  try{
+    localStorage.removeItem(KEY);
+    for (var i = localStorage.length - 1; i >= 0; i--){
+      var k = localStorage.key(i);
+      if (k && k.indexOf('tokei-chan') === 0) localStorage.removeItem(k);
+    }
+  }catch(e){}
+  updateStats(); renderLevels(); newRound();
+});
+var resetArmed = false;
+
+$('btnSound').addEventListener('click', function(){
+  soundOn = !soundOn;
+  $('btnSound').textContent = soundOn ? '🔊' : '🔇';
+  try{ localStorage.setItem('tokei-chan-sound', soundOn ? 'on' : 'off'); }catch(e){}
+});
+
+$('btnEN').addEventListener('click', function(){ setLang('en'); $('btnEN').classList.add('on'); $('btnPT').classList.remove('on'); });
+$('btnPT').addEventListener('click', function(){ setLang('pt'); $('btnPT').classList.add('on'); $('btnEN').classList.remove('on'); });
+
+$('btnGame').addEventListener('click', function(){ S.tab = 'game'; $('btnGame').classList.add('on'); $('btnGuide').classList.remove('on'); $('gameCard').style.display = ''; $('masteryRow').style.display = ''; });
+$('btnGuide').addEventListener('click', function(){ S.tab = 'guide'; $('btnGuide').classList.add('on'); $('btnGame').classList.remove('on'); $('gameCard').style.display = 'none'; $('masteryRow').style.display = 'none'; });
+
+$('btnWelcome').addEventListener('click', function(){ $('welcomeOv').classList.add('hidden'); newRound(); });
+
+/* ================= INIT ================= */
+if (!storageOK()){
+  try{
+    var _ns = document.createElement('p');
+    _ns.className = 'save-note';
+    _ns.setAttribute('data-en', T('noSave'));
+    _ns.setAttribute('data-pt', T('noSave'));
+    _ns.style.color = 'var(--warn)';
+    _ns.textContent = T('noSave');
+    var _ft = document.querySelector('footer');
+    if (_ft) _ft.insertBefore(_ns, _ft.firstChild);
+  }catch(e){}
+}
+
+var prog = load();
+
+renderLevels();
+updateStats();
+
+if (document.querySelectorAll('.lv.locked').length === LEVELS.length - 1){
+  $('welcomeOv').classList.remove('hidden');
+} else {
+  newRound();
+}
+
+/* debug/rescue handle: read-only bridge for automated tests and console rescue */
+window.tokei = {
+  prog: function(){ return prog; },
+  state: function(){ return S; },
+  lesMem: function(){ return lesMem; },
+  record: record,
+  saveCode: saveCode,
+  gatherStore: gatherStore,
+  storageOK: storageOK,
+  levelUnlocked: levelUnlocked,
+  applyStoreSmart: applyStoreSmart,
+  renderSet: renderSet,
+  LEVELS: LEVELS
+};
+
+})();
+</script>
+</body>
+</html>
