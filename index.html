@@ -75,7 +75,7 @@ progress#progBar::-moz-progress-bar{background:linear-gradient(90deg,var(--pink-
   padding:14px;display:flex;flex-wrap:wrap;gap:14px;
   box-shadow:0 8px 22px rgba(199,91,119,.08);
 }
-.clock-wrap{flex:1 1 240px;min-width:200px}
+.clock-wrap{flex:1 1 240px;min-width:200px;position:relative}
 .clock-wrap svg{width:100%;height:auto;display:block;filter:drop-shadow(0 10px 16px rgba(199,91,119,.16));animation:kBob 3.4s ease-in-out infinite;transform-origin:50% 90%}
 @keyframes kBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
 @media (prefers-reduced-motion:reduce){.clock-wrap svg{animation:none}}
@@ -157,6 +157,15 @@ footer{margin-top:24px;text-align:center;color:var(--muted);font-size:.78rem}
 .stepbtn:hover{border-color:var(--accent)}
 .readout{font-size:1.35rem;font-weight:800;text-align:center;margin:10px 0}
 .readout small{display:block;font-size:.75rem;color:var(--muted);font-weight:600}
+
+.speaker-btn{position:absolute;bottom:10px;right:10px;border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 12px;cursor:pointer;font-size:.9rem;box-shadow:0 2px 10px rgba(199,91,119,.12);z-index:5}
+.speaker-btn:hover{border-color:var(--accent)}
+.speaker-btn span{display:block;font-size:.62rem;color:var(--muted);font-weight:700}
+
+.target-read{font-size:1.15rem;font-weight:800;text-align:center;margin:6px 0 12px;color:var(--accent);background:var(--accent-soft);border:1px solid var(--accent-line);border-radius:14px;padding:10px 14px}
+.target-read small{display:block;font-size:.78rem;color:var(--muted);font-weight:600;margin-top:3px}
+
+.hidden{display:none !important}
 
 @media(max-width:560px){
   #app{padding:10px 10px 30px}
@@ -255,7 +264,7 @@ footer{margin-top:24px;text-align:center;color:var(--muted);font-size:.78rem}
 
 <footer>
   <button class="btn ghost" id="btnReset" data-en="はじめから · Reset progress" data-pt="はじめから · Recomeçar">はじめから · Reset progress</button>
-  <p class="save-note" style="margin:6px 0 0;opacity:.8">Tokei-chan v18</p>
+  <p class="save-note" style="margin:6px 0 0;opacity:.8">Tokei-chan v19</p>
 </footer>
 
 <script>
@@ -659,8 +668,14 @@ initTTS();
 
 function speakAns(){ speakJP(toKatakana(S.ans.k)); }
 function drawSpeaker(){
-  $('clockWrap').innerHTML = '<button class="speaker" id="btnSpeak" aria-label="play">🔊<span>きく</span></button>';
-  $('btnSpeak').addEventListener('click', speakAns);
+  var wrap = $('clockWrap');
+  var existing = wrap.querySelector('.speaker-btn');
+  if (existing) existing.remove();
+  var btn = document.createElement('button');
+  btn.className = 'speaker-btn';
+  btn.innerHTML = '🔊<span>きく</span>';
+  btn.addEventListener('click', speakAns);
+  wrap.appendChild(btn);
 }
 
 function toKatakana(s){
@@ -777,6 +792,7 @@ function newRound(){
   S.cur = itemTime(S.key);
   S.mode = pickMode();
   S.ans = buildAns(S.cur);
+  S.setH = 1; S.setM = 0; S.setAp = null;
   maybeLesson();
   updateStats(); renderStars();
   if (S.mode === 'mc') renderMC();
@@ -785,8 +801,7 @@ function newRound(){
 }
 
 function buildAns(t){
-  if (S.mode === 'mc') return {h:t.h, m:t.m, ap:t.ap, k: timeKana(t.h, t.m, t.ap), r: timeRomaji(t.h, t.m, t.ap)};
-  return {h:t.h, m:t.m, ap:t.ap};
+  return {h:t.h, m:t.m, ap:t.ap, k: timeKana(t.h, t.m, t.ap), r: timeRomaji(t.h, t.m, t.ap)};
 }
 
 /* ================= MC: listen + pick ================= */
@@ -797,11 +812,13 @@ function renderMC(){
   var area = $('answerArea'); area.innerHTML = '';
   var opts = clockDistractors(S.cur);
   opts.splice(drawPos(opts.length + 1), 0, S.ans);
-  opts.forEach(function(o, i){
+  var btns = [];
+  opts.forEach(function(o){
     var b = document.createElement('button');
     b.className = 'tile clock-tile';
     b.innerHTML = clockTileSVG(o.h, o.m);
-    b.addEventListener('click', function(){ if (S.answered) return; checkMC(o, b, opts); });
+    btns.push(b);
+    b.addEventListener('click', function(){ if (S.answered) return; checkMC(o, b, btns); });
     area.appendChild(b);
   });
   $('btnMain').textContent = T('skip');
@@ -823,14 +840,14 @@ function clockDistractors(cur){
   return out;
 }
 
-function checkMC(o, btn, all){
+function checkMC(o, btn, allBtns){
   S.answered = true;
   var ok = (o.h === S.ans.h && o.m === S.ans.m && o.ap === S.ans.ap);
   S.correct = ok;
   record(S.key, ok);
   chime(ok ? 'ok' : 'bad');
   btn.classList.add(ok ? 'correct' : 'wrong');
-  all.forEach(function(b, i){ if (all[i] !== o) all[i].classList.add('ghost'); });
+  allBtns.forEach(function(b){ if (b !== btn) b.classList.add('ghost'); });
   var html = '';
   if (!ok) html = '<div>' + T('reveal') + ' <b>' + S.ans.k + '</b> <span style="opacity:.7">' + S.ans.r + '</span></div>';
   showFeedback(ok, html);
@@ -848,11 +865,13 @@ function renderLMC(){
   var area = $('answerArea'); area.innerHTML = '';
   var opts = lmcDistractors(S.cur);
   opts.splice(drawPos(opts.length + 1), 0, S.ans);
+  var btns = [];
   opts.forEach(function(o){
     var b = document.createElement('button');
     b.className = 'tile';
     b.innerHTML = '<div>' + o.k + '</div><span class="sub">' + o.r + '</span>';
-    b.addEventListener('click', function(){ if (S.answered) return; checkLMC(o, b, opts); });
+    btns.push(b);
+    b.addEventListener('click', function(){ if (S.answered) return; checkLMC(o, b, btns); });
     area.appendChild(b);
   });
   $('btnMain').textContent = T('skip');
@@ -875,14 +894,14 @@ function lmcDistractors(cur){
   return out;
 }
 
-function checkLMC(o, btn, all){
+function checkLMC(o, btn, allBtns){
   S.answered = true;
   var ok = (o.h === S.ans.h && o.m === S.ans.m && o.ap === S.ans.ap);
   S.correct = ok;
   record(S.key, ok);
   chime(ok ? 'ok' : 'bad');
   btn.classList.add(ok ? 'correct' : 'wrong');
-  all.forEach(function(b){ if (b !== btn) b.classList.add('ghost'); });
+  allBtns.forEach(function(b){ if (b !== btn) b.classList.add('ghost'); });
   var html = '';
   if (!ok) html = '<div>' + T('reveal') + ' <b>' + S.ans.k + '</b> <span style="opacity:.7">' + S.ans.r + '</span></div>';
   showFeedback(ok, html);
@@ -900,10 +919,15 @@ function renderSet(first){
   $('clockWrap').innerHTML = clockSVG(S.setH, S.setM, S.setAp);
   var area = $('answerArea'); area.innerHTML = '';
 
-  // Hour chips
+  var targetDiv = document.createElement('div');
+  targetDiv.className = 'target-read';
+  targetDiv.innerHTML = '<div style="font-size:.82rem;color:var(--muted);margin-bottom:4px">Set the clock to:</div>' +
+    S.ans.k + '<small>' + S.ans.r + '</small>';
+  area.appendChild(targetDiv);
+
   var hrLabel = document.createElement('div');
   hrLabel.style.cssText = 'font-size:.82rem;font-weight:800;color:var(--muted);margin:4px 0';
-  hrLabel.textContent = '時 · HOUR — tap or type';
+  hrLabel.textContent = '時 · HOUR';
   area.appendChild(hrLabel);
   var hrRow = document.createElement('div'); hrRow.className = 'chip-row';
   for (var h = 1; h <= 12; h++){
@@ -916,7 +940,6 @@ function renderSet(first){
   }
   area.appendChild(hrRow);
 
-  // Minutes
   var ctl = document.createElement('div');
   var lbl = document.createElement('div');
   lbl.style.cssText = 'font-size:.82rem;font-weight:800;color:var(--muted);margin:10px 0 4px';
@@ -935,6 +958,22 @@ function renderSet(first){
   ctl.appendChild(lbl); ctl.appendChild(mr);
   area.appendChild(ctl);
 
+  if (S.cur.ap){
+    var apLabel = document.createElement('div');
+    apLabel.style.cssText = 'font-size:.82rem;font-weight:800;color:var(--muted);margin:10px 0 4px';
+    apLabel.textContent = 'ごぜん / ごご · AM / PM';
+    area.appendChild(apLabel);
+    var apRow = document.createElement('div'); apRow.className = 'chip-row';
+    ['gozen','gogo'].forEach(function(apKey){
+      var b = document.createElement('button');
+      b.className = 'chip' + (S.setAp === apKey ? ' sel' : '');
+      b.textContent = AP[apKey].en + ' · ' + AP[apKey].k;
+      b.addEventListener('click', function(){ S.setAp = apKey; renderSet(false); });
+      apRow.appendChild(b);
+    });
+    area.appendChild(apRow);
+  }
+
   var readout = document.createElement('div');
   readout.className = 'readout';
   readout.id = 'readout';
@@ -948,303 +987,246 @@ function renderSet(first){
   if (mMinusEl) mMinusEl.addEventListener('click', function(){ stepMin(-L.step); });
   if (mPlusEl) mPlusEl.addEventListener('click', function(){ stepMin(L.step); });
   if (minValEl) minValEl.disabled = lock;
-  if (minValEl){
-    minValEl.addEventListener('input', function(){
-      if (S.answered || $('minVal').disabled){ drawSetClock(); return; }
-      var v = parseInt(this.value, 10);
-      if (!isNaN(v) && v >= 0 && v <= 59){ S.setM = v; }
-      drawSetClock();
-    });
-    minValEl.addEventListener('keydown', inpEnter);
+  if (minValEl && !lock){
+    minValEl.addEventListener('change', function(){ parseMinInput(this); });
+    minValEl.addEventListener('input', function(){ var v = parseInt(this.value,10); if (!isNaN(v) && v >= 0 && v <= 59){ S.setM = v; refreshReadout(); drawSetClock(); } });
   }
+  if (minValEl && !lock && first) minValEl.value = S.setM;
 
-  drawSetClock();
+  refreshReadout(); drawSetClock();
 
   $('btnMain').textContent = T('check');
   $('btnMain').className = 'btn btn-primary';
-  $('btnMain').onclick = checkSet;
+  $('btnMain').onclick = function(){ if (!S.answered) checkSet(); };
   $('btnSkip').classList.remove('hidden');
+  $('btnSkip').onclick = skip;
   $('feedback').classList.remove('show');
 }
 
-function inpEnter(e){ if (e.key === 'Enter'){ e.preventDefault(); checkSet(); } }
+function setHour(h){ S.setH = h; renderSet(false); }
+function stepMin(delta){ S.setM = Math.max(0, Math.min(59, S.setM + delta)); drawSetClock(); refreshReadout(); var el = $('minVal'); if (el) el.value = S.setM; }
+function parseMinInput(el){ var v = parseInt(el.value,10); if (isNaN(v) || v < 0) v = 0; if (v > 59) v = 59; S.setM = v; el.value = v; drawSetClock(); refreshReadout(); }
+function drawSetClock(){ $('clockWrap').innerHTML = clockSVG(S.setH, S.setM, S.setAp); }
 
-function drawSetClock(){
-  $('clockWrap').innerHTML = clockSVG(S.setH, S.setM, S.setAp);
-  var mm = (S.setM < 10 ? '0' : '') + S.setM;
-  var mv = $('minVal');
-  if (mv && document.activeElement !== mv) mv.value = mm;
-  $('readout').innerHTML = (S.cur.ap ? AP[S.setAp].en + ' ' : '') + S.setH + '<b>:</b>' + mm + '<small>' + T('setTime') + '</small>';
-}
-
-function setHour(h){ S.setH = h; drawSetClock(); }
-function stepMin(d){
-  var L = LEVELS[S.level];
-  var mv = $('minVal');
-  if (!mv) return;
-  S.setM = Math.max(0, Math.min(59, S.setM + d));
-  mv.value = (S.setM < 10 ? '0' : '') + S.setM;
-  drawSetClock();
+function refreshReadout(){
+  var r = $('readout');
+  if (!r) return;
+  r.innerHTML = timeKana(S.setH, S.setM, S.setAp) + '<small>' + timeRomaji(S.setH, S.setM, S.setAp) + '</small>';
 }
 
 function checkSet(){
-  if (S.answered) return;
-  S.answered = true;
   var ok = (S.setH === S.ans.h && S.setM === S.ans.m && S.setAp === S.ans.ap);
-  S.correct = ok;
+  S.answered = true; S.correct = ok;
   record(S.key, ok);
   chime(ok ? 'ok' : 'bad');
   var html = '';
-  if (!ok) html = '<div>' + T('reveal') + ' <b>' + timeKana(S.ans.h, S.ans.m, S.ans.ap) + '</b></div>';
+  if (!ok) html = '<div>' + T('reveal') + ' <b>' + S.ans.k + '</b> <span style="opacity:.7">' + S.ans.r + '</span></div>';
   showFeedback(ok, html);
-  $('btnMain').textContent = T('next');
-  $('btnMain').onclick = newRound;
-  maybeDone();
-}
-
-/* ================= SKIP & DONE ================= */
-function skip(){
-  S.answered = true; S.correct = false;
-  record(S.key, false);
-  chime('bad');
-  var html = '<div>' + T('reveal') + ' <b>' + S.ans.k + '</b> <span style="opacity:.7">' + S.ans.r + '</span></div>';
-  showFeedback(false, html);
   $('btnMain').textContent = T('next');
   $('btnMain').className = 'btn btn-primary';
   $('btnMain').onclick = newRound;
+  $('btnSkip').classList.add('hidden');
+  maybeDone();
 }
 
+function skip(){ record(S.key, false); newRound(); }
+
+/* ================= DONE ================= */
 function maybeDone(){
+  if (!levelDone(S.level)) return;
   if (doneShown) return;
+  doneShown = true;
   var L = LEVELS[S.level];
-  if (levelDone(S.level)){
-    doneShown = true;
-    $('doneMsg').innerHTML = T('correct') + '<br><small>' + L.name + ' — ' + L.label[lang] + '</small>';
-    $('doneOv').classList.remove('hidden');
-  }
+  var nextL = LEVELS[S.level + 1];
+  var msg = '<b>' + L.name + '</b> completed! 🎉';
+  if (nextL) msg += '<br>' + nextL.name + ' is now unlocked.';
+  $('doneMsg').innerHTML = msg;
+  $('doneOv').classList.remove('hidden');
 }
 
 $('btnNextLevel').addEventListener('click', function(){
   $('doneOv').classList.add('hidden');
-  if (S.level + 1 < LEVELS.length){
-    S.level++; newRound();
-  } else {
-    newRound();
-  }
+  if (LEVELS[S.level + 1]){ S.level++; doneShown = false; newRound(); }
 });
-$('btnStay').addEventListener('click', function(){ $('doneOv').classList.add('hidden'); });
+$('btnStay').addEventListener('click', function(){
+  $('doneOv').classList.add('hidden');
+  doneShown = false;
+});
 
-/* ================= BALANCED POSITIONS ================= */
-var posBags = {};
+/* ================= RANDOM HELPERS ================= */
+var posBag = [];
 function drawPos(n){
-  var bag = posBags[n] || (posBags[n] = []);
-  if (!bag.length){
-    for (var i = 0; i < n; i++) bag.push(i);
-    for (var i2 = bag.length - 1; i2 > 0; i2--){
-      var j = Math.floor(Math.random() * (i2 + 1));
-      var t = bag[i2]; bag[i2] = bag[j]; bag[j] = t;
+  if (!posBag.length){
+    for (var i = 0; i < n; i++) posBag.push(i);
+    for (var j = posBag.length - 1; j > 0; j--){
+      var k = Math.floor(Math.random() * (j + 1));
+      var tmp = posBag[j]; posBag[j] = posBag[k]; posBag[k] = tmp;
     }
   }
-  return bag.pop();
+  return posBag.shift();
 }
 
-/* ================= SAVE SYSTEM ================= */
-function storageOK(){
-  try{ var t = 'tokei-chan-probe'; localStorage.setItem(t, '1'); localStorage.removeItem(t); return true; }catch(e){ return false; }
-}
+/* ================= SAVE / EXPORT / IMPORT ================= */
 function gatherStore(){
   var store = {};
   try{
+    var s = localStorage.getItem(KEY);
+    if (s) store = JSON.parse(s);
+  }catch(e){}
+  store.app = 'tokei-chan'; store.v = 1;
+  // Overlay live prog + lesMem so export reflects current session even if storage is blocked
+  store.m = prog.m; store.score = prog.score; store.best = prog.best;
+  store.total = prog.total; store.correct = prog.correct;
+  var les = {};
+  Object.keys(lesMem).forEach(function(k){ les[k] = true; });
+  try{
     for (var i = 0; i < localStorage.length; i++){
-      var k = localStorage.key(i);
-      if (k && k.indexOf('tokei-chan') === 0) store[k] = localStorage.getItem(k);
+      var k2 = localStorage.key(i);
+      if (k2 && k2.indexOf('tokei-chan-les-') === 0) les[k2.replace('tokei-chan-les-','')] = true;
     }
   }catch(e){}
-  try{ store[KEY] = JSON.stringify(prog); }catch(e){}
-  for (var id in lesMem){ store['tokei-chan-les-' + id] = '1'; }
+  store._lessons = les;
   return store;
 }
-function applyStore(store){
-  var n = 0;
-  if (!store || typeof store !== 'object') return 0;
-  try{
-    Object.keys(store).forEach(function(k){
-      if (k.indexOf('tokei-chan') === 0){ localStorage.setItem(k, store[k]); n++; }
-    });
-  }catch(e){}
-  return n;
-}
-function applyStoreLive(store){
-  var n = 0;
-  if (!store || typeof store !== 'object') return 0;
-  if (typeof store[KEY] === 'string'){ prog = JSON.parse(store[KEY]); n++; }
-  Object.keys(store).forEach(function(k){
-    var m = k.match(/^tokei-chan-les-(.+)$/);
-    if (m){ lesMem[m[1]] = 1; n++; }
-  });
-  return n;
-}
-function applyStoreSmart(data){
-  if (!applyStore(data.store)) throw new Error('empty');
-  var stuck = false;
-  try{
-    stuck = Object.keys(data.store).every(function(k){ return localStorage.getItem(k) === data.store[k]; });
-  }catch(e){ stuck = false; }
-  if (stuck){ location.reload(); return; }
-  applyStoreLive(data.store);
-  if (!levelUnlocked(S.level)) S.level = 0;
-  doneShown = false;
-  renderLevels(); updateStats(); newRound();
-}
 
-function saveCode(){
-  var store = gatherStore();
-  var data = { app: 'tokei-chan', v: 1, when: new Date().toISOString(), store: store };
-  var raw = JSON.stringify(data);
-  return btoa(unescape(encodeURIComponent(raw)));
-}
+function toB64(o){ return btoa(unescape(encodeURIComponent(JSON.stringify(o)))); }
+function fromB64(s){ return JSON.parse(decodeURIComponent(escape(atob(s)))); }
 
-function parseSaveCode(code){
-  var raw = decodeURIComponent(escape(atob(code)));
-  return JSON.parse(raw);
+function storageOK(){
+  try{ var t = 'tokei-test-' + Date.now(); localStorage.setItem(t, '1'); localStorage.removeItem(t); return true; }catch(e){ return false; }
 }
 
 function exportSave(){
-  var data = { app: 'tokei-chan', v: 1, when: new Date().toISOString(), store: gatherStore() };
-  var blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+  var s = JSON.stringify(gatherStore());
+  var blob = new Blob([s], {type:'application/json'});
   var a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = 'tokei-chan-save.json';
-  document.body.appendChild(a); a.click(); a.remove();
+  a.click();
 }
 
-function fallbackCopy(text){
-  try{
-    var ta = document.createElement('textarea');
-    ta.value = text;
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand('copy');
-    document.body.removeChild(ta);
-  }catch(e){ openCodeOv('show', text); }
-}
-
-function openCodeOv(mode, code){
+function showCode(title, text, okText, cancelText, onOk){
+  $('codeTitle').textContent = title;
+  var ta = $('codeTa'); ta.value = text;
+  $('btnCodeOk').textContent = okText;
+  $('btnCodeCancel').textContent = cancelText;
   $('codeOv').classList.remove('hidden');
-  $('codeTitle').textContent = T(mode === 'show' ? 'codeShow' : 'codePaste');
-  $('codeTa').value = code || '';
-  $('codeTa').readOnly = (mode === 'show');
-  $('btnCodeOk').textContent = T('importBtn');
-  $('btnCodeCancel').textContent = T('cancelBtn');
-  if (mode === 'show'){ $('btnCodeOk').classList.add('hidden'); }
-  else { $('btnCodeOk').classList.remove('hidden'); }
-  setTimeout(function(){ try{ $('codeTa').focus(); if (mode === 'show') $('codeTa').select(); }catch(e){} }, 60);
+  $('btnCodeOk').onclick = function(){ onOk(ta.value); };
+  $('btnCodeCancel').onclick = function(){ $('codeOv').classList.add('hidden'); };
 }
 
-function pasteSaveCode(){
-  openCodeOv('paste', '');
-}
-
-$('btnCodeOk').addEventListener('click', function(){
-  try{
-    applyStoreSmart(parseSaveCode($('codeTa').value));
+function showExportCode(){
+  var store = gatherStore();
+  var code = toB64(store);
+  showCode(T('codeShow'), code, 'OK', T('cancelBtn'), function(){
     $('codeOv').classList.add('hidden');
-  }catch(e){
-    $('codeTitle').textContent = T('importErr');
+  });
+  try{
+    navigator.clipboard.writeText(code).then(function(){ showToast('📋 Save code copied to clipboard'); });
+  }catch(e){}
+}
+
+function showImportCode(){
+  showCode(T('codePaste'), '', T('importBtn'), T('cancelBtn'), function(text){
+    $('codeOv').classList.add('hidden');
+    importSaveCode(text.trim());
+  });
+}
+
+function importSaveCode(code){
+  try{
+    var data = fromB64(code);
+    if (data.app !== 'tokei-chan') throw new Error('bad app');
+    applyStoreSmart(data);
+  }catch(e){ alert(T('importErr')); }
+}
+
+function applyStoreSmart(data){
+  prog.m = data.m || {}; prog.score = data.score || 0; prog.best = data.best || 0;
+  prog.total = data.total || 0; prog.correct = data.correct || 0;
+  if (data._lessons){
+    Object.keys(data._lessons).forEach(function(k){ lesMem[k] = 1; lesSet(k); });
   }
-});
-$('btnCodeCancel').addEventListener('click', function(){
-  $('codeOv').classList.add('hidden');
-});
+  save();
+  if (storageOK()){
+    location.reload();
+  } else {
+    renderLevels(); updateStats(); renderStars();
+    if (!S.answered && S.mode !== 'set') newRound();
+    showToast('✅ Save applied! (localStorage blocked — export often)');
+  }
+}
 
-/* ================= EVENTS ================= */
-$('btnExport').addEventListener('click', function(){
-  var code = saveCode();
-  fallbackCopy(code);
-});
-
-$('btnImport').addEventListener('click', function(){ $('fileImport').click(); });
-$('fileImport').addEventListener('change', function(e){
-  var file = e.target.files[0];
-  if (!file) return;
-  var rd = new FileReader();
-  rd.onload = function(){
+function importSaveFile(file){
+  var r = new FileReader();
+  r.onload = function(e){
     try{
-      applyStoreSmart(JSON.parse(rd.result));
+      var data = JSON.parse(e.target.result);
+      if (data.app !== 'tokei-chan') throw new Error('bad app');
+      applyStoreSmart(data);
     }catch(err){ alert(T('importErr')); }
   };
-  try{ rd.readAsText(file); }catch(err){ alert(T('importErr')); }
-  $('fileImport').value = '';
-});
+  r.readAsText(file);
+}
 
-$('btnPasteCode').addEventListener('click', pasteSaveCode);
-
-$('btnReset').addEventListener('click', function(){
-  if (!window.confirm('Reset all progress?')) return;
-  prog = blankProg(); lesMem = {}; S.streak = 0; S.level = 0; doneShown = false;
-  resetArmed = false;
+function resetProgress(){
+  prog = blankProg();
   try{
     localStorage.removeItem(KEY);
-    for (var i = localStorage.length - 1; i >= 0; i--){
+    for (var i = 0; i < localStorage.length; i++){
       var k = localStorage.key(i);
-      if (k && k.indexOf('tokei-chan') === 0) localStorage.removeItem(k);
+      if (k && k.indexOf('tokei-chan-les-') === 0) localStorage.removeItem(k);
     }
   }catch(e){}
+  S.streak = 0; S.level = 0; doneShown = false;
   updateStats(); renderLevels(); newRound();
-});
-var resetArmed = false;
+}
 
+function showToast(msg){
+  var t = document.createElement('div');
+  t.textContent = msg;
+  t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#2c3240;color:#fff;padding:10px 20px;border-radius:999px;font-size:.9rem;font-weight:700;z-index:60;box-shadow:0 6px 20px rgba(0,0,0,.2)';
+  document.body.appendChild(t);
+  setTimeout(function(){ t.style.opacity = '0'; t.style.transition = 'opacity .5s'; setTimeout(function(){ t.remove(); }, 500); }, 3000);
+}
+
+/* ================= EVENTS ================= */
 $('btnSound').addEventListener('click', function(){
   soundOn = !soundOn;
-  $('btnSound').textContent = soundOn ? '🔊' : '🔇';
+  this.textContent = soundOn ? '🔊' : '🔇';
   try{ localStorage.setItem('tokei-chan-sound', soundOn ? 'on' : 'off'); }catch(e){}
 });
 
 $('btnEN').addEventListener('click', function(){ setLang('en'); $('btnEN').classList.add('on'); $('btnPT').classList.remove('on'); });
 $('btnPT').addEventListener('click', function(){ setLang('pt'); $('btnPT').classList.add('on'); $('btnEN').classList.remove('on'); });
 
-$('btnGame').addEventListener('click', function(){ S.tab = 'game'; $('btnGame').classList.add('on'); $('btnGuide').classList.remove('on'); $('gameCard').style.display = ''; $('masteryRow').style.display = ''; });
-$('btnGuide').addEventListener('click', function(){ S.tab = 'guide'; $('btnGuide').classList.add('on'); $('btnGame').classList.remove('on'); $('gameCard').style.display = 'none'; $('masteryRow').style.display = 'none'; });
+$('btnWelcome').addEventListener('click', function(){ $('welcomeOv').classList.add('hidden'); });
 
-$('btnWelcome').addEventListener('click', function(){ $('welcomeOv').classList.add('hidden'); newRound(); });
+$('btnExport').addEventListener('click', function(){ showExportCode(); });
+$('btnPasteCode').addEventListener('click', function(){ showImportCode(); });
+$('btnImport').addEventListener('click', function(){ $('fileImport').click(); });
+$('fileImport').addEventListener('change', function(e){ if (e.target.files[0]) importSaveFile(e.target.files[0]); });
+$('btnReset').addEventListener('click', function(){
+  showCode('Reset?', 'This will erase ALL progress. Are you sure?', 'Reset', 'Cancel', function(){
+    $('codeOv').classList.add('hidden');
+    resetProgress();
+  });
+});
 
 /* ================= INIT ================= */
-if (!storageOK()){
-  try{
-    var _ns = document.createElement('p');
-    _ns.className = 'save-note';
-    _ns.setAttribute('data-en', T('noSave'));
-    _ns.setAttribute('data-pt', T('noSave'));
-    _ns.style.color = 'var(--warn)';
-    _ns.textContent = T('noSave');
-    var _ft = document.querySelector('footer');
-    if (_ft) _ft.insertBefore(_ns, _ft.firstChild);
-  }catch(e){}
-}
-
-var prog = load();
-
 renderLevels();
-updateStats();
+newRound();
 
-if (document.querySelectorAll('.lv.locked').length === LEVELS.length - 1){
-  $('welcomeOv').classList.remove('hidden');
-} else {
-  newRound();
-}
-
-/* debug/rescue handle: read-only bridge for automated tests and console rescue */
+// Expose handle for rescue / automated testing
 window.tokei = {
-  prog: function(){ return prog; },
-  state: function(){ return S; },
-  lesMem: function(){ return lesMem; },
-  record: record,
-  saveCode: saveCode,
-  gatherStore: gatherStore,
-  storageOK: storageOK,
-  levelUnlocked: levelUnlocked,
-  applyStoreSmart: applyStoreSmart,
-  renderSet: renderSet,
+  S: S, prog: prog, LEVELS: LEVELS,
+  newRound: newRound, renderMC: renderMC, renderLMC: renderLMC, renderSet: renderSet,
+  checkMC: checkMC, checkLMC: checkLMC, checkSet: checkSet,
+  itemTime: itemTime, itemWeight: itemWeight, drawPos: drawPos,
+  timeKana: timeKana, timeRomaji: timeRomaji, clockSVG: clockSVG,
+  buildAns: buildAns, gatherStore: gatherStore,
+  storageOK: storageOK, levelUnlocked: levelUnlocked,
+  applyStoreSmart: applyStoreSmart, renderSet: renderSet,
   LEVELS: LEVELS
 };
 
