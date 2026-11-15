@@ -165,6 +165,8 @@ footer{margin-top:24px;text-align:center;color:var(--muted);font-size:.78rem}
 .target-read{font-size:1.15rem;font-weight:800;text-align:center;margin:6px 0 12px;color:var(--accent);background:var(--accent-soft);border:1px solid var(--accent-line);border-radius:14px;padding:10px 14px}
 .target-read small{display:block;font-size:.78rem;color:var(--muted);font-weight:600;margin-top:3px}
 
+.tile.clock-tile{min-width:110px;padding:8px}
+.tile.clock-tile svg{display:block;margin:0 auto}
 .hidden{display:none !important}
 
 @media(max-width:560px){
@@ -264,7 +266,7 @@ footer{margin-top:24px;text-align:center;color:var(--muted);font-size:.78rem}
 
 <footer>
   <button class="btn ghost" id="btnReset" data-en="はじめから · Reset progress" data-pt="はじめから · Recomeçar">はじめから · Reset progress</button>
-  <p class="save-note" style="margin:6px 0 0;opacity:.8">Tokei-chan v19</p>
+  <p class="save-note" style="margin:6px 0 0;opacity:.8">Tokei-chan v20</p>
 </footer>
 
 <script>
@@ -432,83 +434,65 @@ var LESSONS = {
       }},
     { title:{en:'Step 2 · The rebels: 4, 7, 9', pt:'Passo 2 · As rebeldes: 4, 7, 9'},
       body:{
-        en:'<p>Three hours break the pattern. Learn these cold, the game will test them a lot:</p>' +
-          '<table><tr><th>Hour</th><th class="o">Correct</th><th class="x">Trap</th></tr>' +
-          '<tr><td>4</td><td class="o">よじ</td><td class="x">よんじ / しじ</td></tr>' +
-          '<tr><td>7</td><td class="o">しちじ</td><td class="x">ななじ</td></tr>' +
-          '<tr><td>9</td><td class="o">くじ</td><td class="x">きゅうじ</td></tr></table>' +
-          '<p>In real life many Japanese say ななじ and きゅうじ too, but textbooks expect the old forms.</p>',
-        pt:'<p>Três horas quebram o padrão. Aprenda de cor, o jogo vai testá-las bastante:</p>' +
-          '<table><tr><th>Hora</th><th class="o">Correto</th><th class="x">Armadilha</th></tr>' +
-          '<tr><td>4</td><td class="o">よじ</td><td class="x">よんじ / しじ</td></tr>' +
-          '<tr><td>7</td><td class="o">しちじ</td><td class="x">ななじ</td></tr>' +
-          '<tr><td>9</td><td class="o">くじ</td><td class="x">きゅうじ</td></tr></table>' +
-          '<p>Na vida real muitos japoneses também dizem ななじ e きゅうじ, mas os livros didáticos esperam as formas antigas.</p>'
+        en:'<p>Three hours break the pattern. Learn these carefully:</p>' +
+          '<table><tr><td>4:00</td><td class="o">よじ</td><td>not しじ</td></tr>' +
+          '<tr><td>7:00</td><td class="o">しちじ</td><td>also acceptable</td></tr>' +
+          '<tr><td>9:00</td><td class="o">くじ</td><td>not きゅうじ</td></tr></table>' +
+          '<p>The rest follow the normal rule. Tap Next when you are ready.</p>',
+        pt:'<p>Três horas quebram o padrão. Aprenda com cuidado:</p>' +
+          '<table><tr><td>4h</td><td class="o">よじ</td><td>não しじ</td></tr>' +
+          '<tr><td>7h</td><td class="o">しちじ</td><td>também aceitável</td></tr>' +
+          '<tr><td>9h</td><td class="o">くじ</td><td>não きゅうじ</td></tr></table>' +
+          '<p>O resto segue a regra normal. Toque em Próximo quando estiver pronto.</p>'
       }}
   ]},
   han: { pages: [
-    { title:{en:'Half past · 〜時半', pt:'E meia · 〜時半'},
+    { title:{en:':30 · Half past', pt:':30 · E meia'},
       body:{
-        en:'<p>To say "half past", add <b>半 はん</b> after the hour:</p>' +
-          '<table><tr><td>1:30</td><td class="o">いちじはん</td><td>6:30</td><td class="o">ろくじはん</td></tr>' +
+        en:'<p>At :30, add <b>半 はん</b> instead of 分:</p>' +
+          '<table><tr><td>1:30</td><td class="o">いちじはん</td><td>4:30</td><td class="o">よじはん</td></tr>' +
+          '<tr><td>2:30</td><td class="o">にじはん</td><td>8:30</td><td class="o">はちじはん</td></tr>' +
           '<tr><td>3:30</td><td class="o">さんじはん</td><td>10:30</td><td class="o">じゅうじはん</td></tr></table>' +
-          '<p>There is no separate word for "thirty minutes". 半 means "half" and attaches directly.</p>',
-        pt:'<p>Para dizer "e meia", junte <b>半 はん</b> depois da hora:</p>' +
-          '<table><tr><td>1:30</td><td class="o">いちじはん</td><td>6:30</td><td class="o">ろくじはん</td></tr>' +
+          '<p>Just hour + はん. Same rebel hours apply (よじはん, しちじはん, くじはん).</p>',
+        pt:'<p>Em :30, use <b>半 はん</b> em vez de 分:</p>' +
+          '<table><tr><td>1:30</td><td class="o">いちじはん</td><td>4:30</td><td class="o">よじはん</td></tr>' +
+          '<tr><td>2:30</td><td class="o">にじはん</td><td>8:30</td><td class="o">はちじはん</td></tr>' +
           '<tr><td>3:30</td><td class="o">さんじはん</td><td>10:30</td><td class="o">じゅうじはん</td></tr></table>' +
-          '<p>Não existe palavra separada para "trinta minutos". 半 significa "metade" e se liga diretamente.</p>'
+          '<p>Apenas hora + はん. As mesmas horas rebeldes se aplicam.</p>'
       }}
   ]},
   pun: { pages: [
-    { title:{en:'Minutes in 5-step chunks', pt:'Minutos de 5 em 5'},
+    { title:{en:'5-minute steps', pt:'Passos de 5 minutos'},
       body:{
-        en:'<p>Count by fives with <b>分 ふん/ぷん</b>:</p>' +
+        en:'<p>Minutes use <b>分 ふん</b>, but the reading changes after some numbers:</p>' +
           '<table><tr><td>5</td><td class="o">ごふん</td><td>25</td><td class="o">にじゅうごふん</td></tr>' +
           '<tr><td>10</td><td class="o">じゅっぷん</td><td>30</td><td class="o">さんじゅっぷん</td></tr>' +
-          '<tr><td>15</td><td class="o">じゅうごふん</td><td>45</td><td class="o">よんじゅうごふん</td></tr>' +
-          '<tr><td>20</td><td class="o">にじゅっぷん</td><td>50</td><td class="o">ごじゅっぷん</td></tr></table>' +
-          '<p>Notice: 5, 15, 25, 35, 45, 55 end in ごふん. 10, 20, 30, 40, 50 end in 〜ぷん because of the じゅう/にじゅう base.</p>',
-        pt:'<p>Conte de cinco em cinco com <b>分 ふん/ぷん</b>:</p>' +
+          '<tr><td>15</td><td class="o">じゅうごふん</td><td>35</td><td class="o">さんじゅうごふん</td></tr>' +
+          '<tr><td>20</td><td class="o">にじゅっぷん</td><td>40</td><td class="o">よんじゅっぷん</td></tr></table>' +
+          '<p>Pay attention to 1, 3, 4, 6, 8, 10 minutes — they use ぷん (pun). The rest use ふん (fun).</p>',
+        pt:'<p>Os minutos usam <b>分 ふん</b>, mas a leitura muda depois de alguns números:</p>' +
           '<table><tr><td>5</td><td class="o">ごふん</td><td>25</td><td class="o">にじゅうごふん</td></tr>' +
           '<tr><td>10</td><td class="o">じゅっぷん</td><td>30</td><td class="o">さんじゅっぷん</td></tr>' +
-          '<tr><td>15</td><td class="o">じゅうごふん</td><td>45</td><td class="o">よんじゅうごふん</td></tr>' +
-          '<tr><td>20</td><td class="o">にじゅっぷん</td><td>50</td><td class="o">ごじゅっぷん</td></tr></table>' +
-          '<p>Perceba: 5, 15, 25, 35, 45, 55 terminam em ごふん. 10, 20, 30, 40, 50 terminam em 〜ぷん por causa da base じゅう/にじゅう.</p>'
+          '<tr><td>15</td><td class="o">じゅうごふん</td><td>35</td><td class="o">さんじゅうごふん</td></tr>' +
+          '<tr><td>20</td><td class="o">にじゅっぷん</td><td>40</td><td class="o">よんじゅっぷん</td></tr></table>' +
+          '<p>Atenção aos minutos 1, 3, 4, 6, 8, 10 — eles usam ぷん. O resto usa ふん.</p>'
       }}
   ]},
   exact: { pages: [
-    { title:{en:'Exact minutes — the full chart', pt:'Minutos exatos — tabela completa'},
+    { title:{en:'Exact minutes', pt:'Minutos exatos'},
       body:{
-        en:'<p>All exact-minute readings. The pattern is simple once you see it:</p>' +
-          '<table><tr><th>Min</th><th class="o">Reading</th><th>Min</th><th class="o">Reading</th></tr>' +
-          '<tr><td>1</td><td class="o">いっぷん</td><td>11</td><td class="o">じゅういっぷん</td></tr>' +
-          '<tr><td>2</td><td class="o">にふん</td><td>12</td><td class="o">じゅうにふん</td></tr>' +
-          '<tr><td>3</td><td class="o">さんぷん</td><td>13</td><td class="o">じゅうさんぷん</td></tr>' +
-          '<tr><td>4</td><td class="o">よんぷん</td><td>14</td><td class="o">じゅうよんぷん</td></tr>' +
-          '<tr><td>5</td><td class="o">ごふん</td><td>15</td><td class="o">じゅうごふん</td></tr>' +
-          '<tr><td>6</td><td class="o">ろっぷん</td><td>16</td><td class="o">じゅうろっぷん</td></tr>' +
-          '<tr><td>7</td><td class="o">ななふん</td><td>17</td><td class="o">じゅうななふん</td></tr>' +
-          '<tr><td>8</td><td class="o">はっぷん</td><td>18</td><td class="o">じゅうはっぷん</td></tr>' +
-          '<tr><td>9</td><td class="o">きゅうふん</td><td>19</td><td class="o">じゅうきゅうふん</td></tr>' +
-          '<tr><td>10</td><td class="o">じゅっぷん</td><td>20</td><td class="o">にじゅっぷん</td></tr></table>' +
-          '<p>Rule: unit digit decides ぷん vs ふん. 1,3,4,6,8 → ぷん. 2,5,7,9 → ふん.</p>',
-        pt:'<p>Todas as leituras de minutos exatos. O padrão é simples quando você vê:</p>' +
-          '<table><tr><th>Min</th><th class="o">Leitura</th><th>Min</th><th class="o">Leitura</th></tr>' +
-          '<tr><td>1</td><td class="o">いっぷん</td><td>11</td><td class="o">じゅういっぷん</td></tr>' +
-          '<tr><td>2</td><td class="o">にふん</td><td>12</td><td class="o">じゅうにふん</td></tr>' +
-          '<tr><td>3</td><td class="o">さんぷん</td><td>13</td><td class="o">じゅうさんぷん</td></tr>' +
-          '<tr><td>4</td><td class="o">よんぷん</td><td>14</td><td class="o">じゅうよんぷん</td></tr>' +
-          '<tr><td>5</td><td class="o">ごふん</td><td>15</td><td class="o">じゅうごふん</td></tr>' +
-          '<tr><td>6</td><td class="o">ろっぷん</td><td>16</td><td class="o">じゅうろっぷん</td></tr>' +
-          '<tr><td>7</td><td class="o">ななふん</td><td>17</td><td class="o">じゅうななふん</td></tr>' +
-          '<tr><td>8</td><td class="o">はっぷん</td><td>18</td><td class="o">じゅうはっぷん</td></tr>' +
-          '<tr><td>9</td><td class="o">きゅうふん</td><td>19</td><td class="o">じゅうきゅうふん</td></tr>' +
-          '<tr><td>10</td><td class="o">じゅっぷん</td><td>20</td><td class="o">にじゅっぷん</td></tr></table>' +
-          '<p>Regra: o dígito das unidades decide ぷん vs ふん. 1,3,4,6,8 → ぷん. 2,5,7,9 → ふん.</p>'
+        en:'<p>All minutes 1–59 now appear. Remember the sound rules:</p>' +
+          '<p><b>ぷん (pun)</b> after 1, 3, 4, 6, 8, 10 and their tens (11, 13, 14, 31, 33, 34, 41, 43, 44…)</p>' +
+          '<p><b>ふん (fun)</b> after 2, 5, 7, 9 and their tens (12, 15, 17, 19, 21, 22, 25, 27, 29…)</p>' +
+          '<p>Tip: if the ones digit is 1, 3, 4, 6, 8, 0 → ぷん. If 2, 5, 7, 9 → ふん.</p>',
+        pt:'<p>Todos os minutos de 1–59 agora aparecem. Lembre-se das regras de som:</p>' +
+          '<p><b>ぷん (pun)</b> depois de 1, 3, 4, 6, 8, 10 e suas dezenas.</p>' +
+          '<p><b>ふん (fun)</b> depois de 2, 5, 7, 9 e suas dezenas.</p>' +
+          '<p>Dica: se o dígito das unidades for 1, 3, 4, 6, 8, 0 → ぷん. Se 2, 5, 7, 9 → ふん.</p>'
       }}
   ]},
   ampm: { pages: [
-    { title:{en:'AM / PM · ごぜん・ごご', pt:'AM / PM · ごぜん・ごご'},
+    { title:{en:'AM / PM · ごぜん / ごご', pt:'AM / PM · ごぜん / ごご'},
       body:{
         en:'<p>Japanese uses two 12-hour blocks:</p>' +
           '<table><tr><td>morning</td><td class="o">ごぜん</td><td>gozen</td></tr>' +
@@ -693,31 +677,16 @@ function clockSVG(h, m, ap){
   s += '<circle cx="120" cy="120" r="112" fill="url(#faceGrad)" stroke="#ecc9d3" stroke-width="6"/>';
   s += '<circle cx="120" cy="120" r="99" fill="none" stroke="#f6cfdd" stroke-width="4.5" stroke-linecap="round" stroke-dasharray="0.1 11.7"/>';
   s += '<path d="M0 -9 C1 -2 2 -1 9 0 C2 1 1 2 0 9 C-1 2 -2 1 -9 0 C-2 -1 -1 -2 0 -9 Z" transform="translate(56,58) scale(.85)" fill="#e8c66b"/>';
-  s += '<path d="M0 -9 C1 -2 2 -1 9 0 C2 1 1 2 0 9 C-1 2 -2 1 -9 0 C-2 -1 -1 -2 0 -9 Z" transform="translate(186,52) scale(.6)" fill="#f0a9c0"/>';
-  s += '<g transform="translate(120,13)"><ellipse cx="-10" cy="1" rx="11" ry="6.5" transform="rotate(-28 -10 1)" fill="#f3a7bd"/><ellipse cx="10" cy="1" rx="11" ry="6.5" transform="rotate(28 10 1)" fill="#f3a7bd"/><circle cx="0" cy="0" r="4.6" fill="#e2799b"/><circle cx="-1.2" cy="-1.4" r="1.4" fill="#fff" opacity=".8"/></g>';
-  for (var i = 1; i <= 12; i++){
-    var a = i * 30 - 90, xr = cx + r * Math.cos(a * Math.PI/180), yr = cy + r * Math.sin(a * Math.PI/180);
-    s += '<text x="' + xr + '" y="' + (yr + 5) + '" text-anchor="middle" font-size="14" fill="#9e7a8a" font-weight="700">' + i + '</text>';
-  }
-  s += '<line x1="' + cx + '" y1="' + cy + '" x2="' + (cx + 62 * Math.cos(ha * Math.PI/180)) + '" y2="' + (cy + 62 * Math.sin(ha * Math.PI/180)) + '" stroke="#c75b77" stroke-width="5" stroke-linecap="round"/>';
-  s += '<line x1="' + cx + '" y1="' + cy + '" x2="' + (cx + 82 * Math.cos(ma * Math.PI/180)) + '" y2="' + (cy + 82 * Math.sin(ma * Math.PI/180)) + '" stroke="#e2799b" stroke-width="3.5" stroke-linecap="round"/>';
-  s += '<circle cx="' + cx + '" cy="' + cy + '" r="5" fill="#c75b77"/>';
-  // Kawaii face
-  var eyeY = 152, cheekY = 168;
-  s += '<path d="M88 ' + (eyeY-4) + ' Q96 ' + (eyeY-10) + ' 104 ' + (eyeY-4) + '" stroke="#2c3240" stroke-width="2.5" fill="none" stroke-linecap="round"/>';
-  s += '<path d="M136 ' + (eyeY-4) + ' Q144 ' + (eyeY-10) + ' 152 ' + (eyeY-4) + '" stroke="#2c3240" stroke-width="2.5" fill="none" stroke-linecap="round"/>';
-  s += '<circle cx="99" cy="' + eyeY + '" r="5" fill="#2c3240"/>';
-  s += '<circle cx="141" cy="' + eyeY + '" r="5" fill="#2c3240"/>';
-  s += '<circle cx="100.6" cy="' + (eyeY-1.6) + '" r="1.7" fill="#fff"/>';
-  s += '<circle cx="142.6" cy="' + (eyeY-1.6) + '" r="1.7" fill="#fff"/>';
-  s += '<path d="M108 ' + (cheekY+2) + ' Q120 ' + (cheekY+10) + ' 132 ' + (cheekY+2) + '" stroke="#2c3240" stroke-width="2.5" fill="none" stroke-linecap="round"/>';
-  s += '<circle cx="88" cy="' + cheekY + '" r="7" fill="#f3b8c6" opacity="0.75"/>';
-  s += '<circle cx="88" cy="' + cheekY + '" r="3" fill="#ec8fae" opacity="0.55"/>';
-  s += '<circle cx="152" cy="' + cheekY + '" r="7" fill="#f3b8c6" opacity="0.75"/>';
-  s += '<circle cx="152" cy="' + cheekY + '" r="3" fill="#ec8fae" opacity="0.55"/>';
-  if (ap){
-    s += '<text x="120" y="210" text-anchor="middle" font-size="16" fill="#c75b77" font-weight="800">' + AP[ap].en + '</text>';
-  }
+  s += '<path d="M0 -9 C1 -2 2 -1 9 0 C2 1 1 2 0 9 C-1 2 -2 1 -9 0 C-2 -1 -1 -2 0 -9 Z" transform="translate(188,58) scale(.85)" fill="#e8c66b"/>';
+  s += '<path d="M0 -7 C.8 -1 1.5 0 7 0 C1.5 1 .8 2 0 7 C-.8 2 -1.5 1 -7 0 C-1.5 0 -.8 -1 0 -7 Z" transform="translate(74,66) scale(.7)" fill="#e8c66b"/>';
+  s += '<path d="M0 -7 C.8 -1 1.5 0 7 0 C1.5 1 .8 2 0 7 C-.8 2 -1.5 1 -7 0 C-1.5 0 -.8 -1 0 -7 Z" transform="translate(170,66) scale(.7)" fill="#e8c66b"/>';
+  [3,6,9,12].forEach(function(n){ var a = n*30 - 90; var x = cx + Math.cos(a*Math.PI/180)*(r-10); var y = cy + Math.sin(a*Math.PI/180)*(r-10); s += '<circle cx="'+x+'" cy="'+y+'" r="4" fill="#c75b77"/>'; });
+  [1,2,4,5,7,8,10,11].forEach(function(n){ var a = n*30 - 90; var x = cx + Math.cos(a*Math.PI/180)*(r-4); var y = cy + Math.sin(a*Math.PI/180)*(r-4); s += '<circle cx="'+x+'" cy="'+y+'" r="1.6" fill="#f3a7bd"/>'; });
+  s += '<line x1="'+cx+'" y1="'+cy+'" x2="'+(cx+Math.cos(ha*Math.PI/180)*(r-24))+'" y2="'+(cy+Math.sin(ha*Math.PI/180)*(r-24))+'" stroke="#2c3240" stroke-width="5.5" stroke-linecap="round"/>';
+  s += '<line x1="'+cx+'" y1="'+cy+'" x2="'+(cx+Math.cos(ma*Math.PI/180)*(r-14))+'" y2="'+(cy+Math.sin(ma*Math.PI/180)*(r-14))+'" stroke="#c75b77" stroke-width="3.8" stroke-linecap="round"/>';
+  s += '<circle cx="'+cx+'" cy="'+cy+'" r="5.5" fill="#c75b77"/>';
+  s += '<circle cx="'+cx+'" cy="'+cy+'" r="2.5" fill="#fff"/>';
+  if (ap){ s += '<text x="120" y="212" text-anchor="middle" font-size="17" font-weight="700" fill="#c75b77">'+AP[ap].k+'</text>'; }
   s += '</svg>';
   return s;
 }
@@ -726,107 +695,104 @@ function clockTileSVG(h, m){
   var cx = 60, cy = 60, r = 50;
   var ha = (h % 12) * 30 + m * 0.5 - 90;
   var ma = m * 6 - 90;
-  var s = '<svg viewBox="0 0 120 120">';
+  var s = '<svg viewBox="0 0 120 120" width="90" height="90">';
   s += '<circle cx="60" cy="60" r="56" fill="#fff" stroke="#ecc9d3" stroke-width="3"/>';
-  for (var i = 1; i <= 12; i++){
-    var a = i * 30 - 90, xr = cx + r * Math.cos(a * Math.PI/180), yr = cy + r * Math.sin(a * Math.PI/180);
-    s += '<text x="' + xr + '" y="' + (yr + 3) + '" text-anchor="middle" font-size="9" fill="#9e7a8a">' + i + '</text>';
-  }
-  s += '<line x1="' + cx + '" y1="' + cy + '" x2="' + (cx + 30 * Math.cos(ha * Math.PI/180)) + '" y2="' + (cy + 30 * Math.sin(ha * Math.PI/180)) + '" stroke="#c75b77" stroke-width="3" stroke-linecap="round"/>';
-  s += '<line x1="' + cx + '" y1="' + cy + '" x2="' + (cx + 40 * Math.cos(ma * Math.PI/180)) + '" y2="' + (cy + 40 * Math.sin(ma * Math.PI/180)) + '" stroke="#e2799b" stroke-width="2" stroke-linecap="round"/>';
-  s += '<circle cx="' + cx + '" cy="' + cy + '" r="3" fill="#c75b77"/>';
+  s += '<circle cx="60" cy="60" r="48" fill="none" stroke="#f6cfdd" stroke-width="2" stroke-linecap="round" stroke-dasharray="0.1 6.5"/>';
+  [3,6,9,12].forEach(function(n){ var a = n*30 - 90; var x = cx + Math.cos(a*Math.PI/180)*(r-6); var y = cy + Math.sin(a*Math.PI/180)*(r-6); s += '<circle cx="'+x+'" cy="'+y+'" r="2.2" fill="#c75b77"/>'; });
+  s += '<line x1="'+cx+'" y1="'+cy+'" x2="'+(cx+Math.cos(ha*Math.PI/180)*(r-14))+'" y2="'+(cy+Math.sin(ha*Math.PI/180)*(r-14))+'" stroke="#2c3240" stroke-width="3" stroke-linecap="round"/>';
+  s += '<line x1="'+cx+'" y1="'+cy+'" x2="'+(cx+Math.cos(ma*Math.PI/180)*(r-8))+'" y2="'+(cy+Math.sin(ma*Math.PI/180)*(r-8))+'" stroke="#c75b77" stroke-width="2" stroke-linecap="round"/>';
+  s += '<circle cx="'+cx+'" cy="'+cy+'" r="3" fill="#c75b77"/>';
   s += '</svg>';
   return s;
 }
 
-/* ================= LEVEL / MODE ================= */
-function levelUnlocked(i){ return i === 0 || levelCleared(i-1); }
+/* ================= LEVELS & MODES ================= */
+var MC_ORDER = ['mc','lmc','set'];
+var MC_INDEX = 0;
+
+function nextMode(){
+  MC_INDEX = (MC_INDEX + 1) % MC_ORDER.length;
+  S.mode = MC_ORDER[MC_INDEX];
+  startExercise();
+}
+
+function levelUnlocked(i){
+  if (i === 0) return true;
+  return levelCleared(i - 1);
+}
 
 function renderLevels(){
   var row = $('levelRow'); row.innerHTML = '';
   LEVELS.forEach(function(L, i){
     var b = document.createElement('button');
-    b.className = 'lv';
-    if (!levelUnlocked(i)) b.classList.add('locked');
-    if (i === S.level) b.classList.add('current');
-    if (levelDone(i)) b.classList.add('done');
-    b.innerHTML = (levelUnlocked(i) ? (levelDone(i) ? '✓ ' : '') : '🔒 ') + L.id + '. ' + L.name + ' <small>' + L.label[lang] + '</small>';
-    if (levelUnlocked(i)) b.addEventListener('click', function(){ S.level = i; newRound(); });
+    var unlocked = levelUnlocked(i);
+    var cls = 'lv' + (i === S.level ? ' current' : '') + (!unlocked ? ' locked' : '') + (levelDone(i) ? ' done' : '');
+    b.className = cls;
+    var done = L.items.filter(function(k){ return mastered(k); }).length;
+    b.innerHTML = L.name + (levelDone(i) ? ' ★' : '') + ' <small>' + done + '/' + L.items.length + '</small>';
+    if (unlocked){
+      b.addEventListener('click', function(){
+        S.level = i; MC_INDEX = 0; S.mode = 'mc';
+        updateStats(); renderLevels(); startExercise();
+      });
+    }
     row.appendChild(b);
   });
 }
 
-function renderStars(){
-  var n = Math.min(5, Math.floor(okOf(S.key)/2));
-  var s = '';
-  for (var i=0;i<5;i++) s += i < n ? '★' : '☆';
-  $('itemStars').textContent = s;
-}
-
-function pickMode(){
-  var L = LEVELS[S.level];
-  if (L.id === 1) return 'mc';
-  if (L.id === 6) return 'set';
-  return Math.random() < 0.6 ? 'lmc' : 'mc';
-}
-
-/* ================= ITEM SELECTION ================= */
+/* ================= EXERCISE ================= */
 function pickItem(){
   var L = LEVELS[S.level];
-  var pool = L.items.slice();
-  var weights = pool.map(function(k){ return itemWeight(k) / (1 + netOf(k)); });
+  var pool = L.items.filter(function(k){ return !mastered(k); });
+  if (pool.length === 0) pool = L.items;
+  var weights = pool.map(itemWeight);
   var total = weights.reduce(function(a,b){ return a+b; }, 0);
-  var r = Math.random() * total;
-  for (var i = 0; i < pool.length; i++){
-    r -= weights[i];
-    if (r <= 0) return pool[i];
-  }
+  var r = Math.random() * total, acc = 0;
+  for (var i = 0; i < pool.length; i++){ acc += weights[i]; if (r <= acc) return pool[i]; }
   return pool[pool.length - 1];
 }
 
-/* ================= ROUND ================= */
-function newRound(){
-  S.answered = false; S.correct = false;
+function startExercise(){
+  doneShown = false;
   var L = LEVELS[S.level];
   S.key = pickItem();
   S.cur = itemTime(S.key);
-  S.mode = pickMode();
   S.ans = buildAns(S.cur);
-  S.setH = 1; S.setM = 0; S.setAp = null;
+  S.answered = false; S.correct = false;
+  if (S.mode === 'set'){ S.setH = 1; S.setM = 0; S.setAp = null; }
   maybeLesson();
-  updateStats(); renderStars();
-  if (S.mode === 'mc') renderMC();
-  else if (S.mode === 'lmc') renderLMC();
-  else renderSet();
+  updateStats();
+  renderGame();
 }
 
 function buildAns(t){
   return {h:t.h, m:t.m, ap:t.ap, k: timeKana(t.h, t.m, t.ap), r: timeRomaji(t.h, t.m, t.ap)};
 }
 
-/* ================= MC: listen + pick ================= */
-function renderMC(){
-  $('modeTitle').textContent = T('modeMC');
+function renderGame(){
+  $('modeTitle').textContent = T(S.mode === 'mc' ? 'modeMC' : S.mode === 'lmc' ? 'modeLMC' : 'modeSet');
+  $('itemStars').textContent = starsStr(okOf(S.key));
+  $('feedback').className = 'feedback';
+  $('btnMain').textContent = S.mode === 'set' ? T('check') : T('next');
+  $('btnMain').className = 'btn btn-primary';
+  $('btnMain').style.display = 'none';
+  $('btnSkip').classList.toggle('hidden', S.mode !== 'set');
   $('clockWrap').innerHTML = clockSVG(S.cur.h, S.cur.m, S.cur.ap);
   drawSpeaker();
-  var area = $('answerArea'); area.innerHTML = '';
-  var opts = clockDistractors(S.cur);
-  opts.splice(drawPos(opts.length + 1), 0, S.ans);
-  var btns = [];
-  opts.forEach(function(o){
-    var b = document.createElement('button');
-    b.className = 'tile clock-tile';
-    b.innerHTML = clockTileSVG(o.h, o.m);
-    btns.push(b);
-    b.addEventListener('click', function(){ if (S.answered) return; checkMC(o, b, btns); });
-    area.appendChild(b);
-  });
-  $('btnMain').textContent = T('skip');
-  $('btnMain').className = 'btn';
-  $('btnMain').onclick = function(){ if (!S.answered) skip(); };
-  $('btnSkip').classList.add('hidden');
-  $('feedback').classList.remove('show');
+  if (S.mode === 'mc') renderMC();
+  else if (S.mode === 'lmc') renderLMC();
+  else renderSet();
+  updateMastery();
 }
+
+function starsStr(n){
+  var s = '';
+  for (var i = 1; i <= 5; i++) s += (i <= n ? '★' : '☆');
+  return s;
+}
+
+/* ================= MC ================= */
+var mcOpts = [];
 
 function clockDistractors(cur){
   var out = [], used = {};
@@ -835,9 +801,35 @@ function clockDistractors(cur){
     var dh = 1 + Math.floor(Math.random() * 12);
     var dm = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55][Math.floor(Math.random() * 12)];
     var k = dh + ':' + dm;
-    if (!used[k]){ used[k] = 1; out.push({h:dh, m:dm}); }
+    if (!used[k]){ used[k] = 1; out.push({h:dh, m:dm, ap:null}); }
   }
   return out;
+}
+
+function drawPos(n){
+  var bag = [0,1,2], pos = [];
+  for (var i = 0; i < n; i++){
+    if (bag.length === 0) bag = [0,1,2];
+    var idx = Math.floor(Math.random() * bag.length);
+    pos.push(bag.splice(idx, 1)[0]);
+  }
+  return pos;
+}
+
+function renderMC(){
+  var area = $('answerArea'); area.innerHTML = '';
+  var opts = clockDistractors(S.cur).concat([{h:S.cur.h, m:S.cur.m, ap:S.cur.ap}]);
+  var pos = drawPos(3);
+  var btns = [];
+  opts.forEach(function(o, i){
+    var b = document.createElement('button');
+    b.className = 'tile clock-tile';
+    b.innerHTML = clockTileSVG(o.h, o.m);
+    btns.push(b);
+    b.addEventListener('click', function(){ if (S.answered) return; checkMC(o, b, btns); });
+    area.appendChild(b);
+  });
+  $('btnMain').addEventListener('click', function(){ nextExercise(); });
 }
 
 function checkMC(o, btn, allBtns){
@@ -848,50 +840,26 @@ function checkMC(o, btn, allBtns){
   chime(ok ? 'ok' : 'bad');
   btn.classList.add(ok ? 'correct' : 'wrong');
   allBtns.forEach(function(b){ if (b !== btn) b.classList.add('ghost'); });
-  var html = '';
-  if (!ok) html = '<div>' + T('reveal') + ' <b>' + S.ans.k + '</b> <span style="opacity:.7">' + S.ans.r + '</span></div>';
-  showFeedback(ok, html);
-  $('btnMain').textContent = T('next');
-  $('btnMain').className = 'btn btn-primary';
-  $('btnMain').onclick = newRound;
-  maybeDone();
+  showFeedback(ok, ok ? '' : '<b>' + T('reveal') + '</b> ' + S.ans.k + ' <small>' + S.ans.r + '</small>');
+  $('btnMain').style.display = '';
+  speakAns();
 }
 
-/* ================= LMC: listen + set ================= */
 function renderLMC(){
-  $('modeTitle').textContent = T('modeLMC');
-  $('clockWrap').innerHTML = clockSVG(S.cur.h, S.cur.m, S.cur.ap);
-  drawSpeaker();
   var area = $('answerArea'); area.innerHTML = '';
-  var opts = lmcDistractors(S.cur);
-  opts.splice(drawPos(opts.length + 1), 0, S.ans);
+  var ans = buildAns(S.cur);
+  var vals = [S.cur.h - 1, S.cur.h, S.cur.h + 1];
+  vals = vals.filter(function(h){ return h >= 1 && h <= 12; });
   var btns = [];
-  opts.forEach(function(o){
+  vals.forEach(function(h){
     var b = document.createElement('button');
     b.className = 'tile';
-    b.innerHTML = '<div>' + o.k + '</div><span class="sub">' + o.r + '</span>';
+    b.innerHTML = HJP[h] + '<span class="sub">' + HR[h] + '</span>';
     btns.push(b);
-    b.addEventListener('click', function(){ if (S.answered) return; checkLMC(o, b, btns); });
+    b.addEventListener('click', function(){ if (S.answered) return; checkLMC({h:h, m:S.cur.m, ap:S.cur.ap}, b, btns); });
     area.appendChild(b);
   });
-  $('btnMain').textContent = T('skip');
-  $('btnMain').className = 'btn';
-  $('btnMain').onclick = function(){ if (!S.answered) skip(); };
-  $('btnSkip').classList.add('hidden');
-  $('feedback').classList.remove('show');
-}
-
-function lmcDistractors(cur){
-  var out = [], used = {};
-  used[cur.h + ':' + cur.m + ':' + (cur.ap||'')] = 1;
-  while (out.length < 2){
-    var dh = 1 + Math.floor(Math.random() * 12);
-    var dm = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55][Math.floor(Math.random() * 12)];
-    var dap = cur.ap ? (Math.random() < 0.5 ? 'gozen' : 'gogo') : null;
-    var k = dh + ':' + dm + ':' + (dap||'');
-    if (!used[k]){ used[k] = 1; out.push({h:dh, m:dm, ap:dap, k: timeKana(dh,dm,dap), r: timeRomaji(dh,dm,dap)}); }
-  }
-  return out;
+  $('btnMain').addEventListener('click', function(){ nextExercise(); });
 }
 
 function checkLMC(o, btn, allBtns){
@@ -902,331 +870,301 @@ function checkLMC(o, btn, allBtns){
   chime(ok ? 'ok' : 'bad');
   btn.classList.add(ok ? 'correct' : 'wrong');
   allBtns.forEach(function(b){ if (b !== btn) b.classList.add('ghost'); });
-  var html = '';
-  if (!ok) html = '<div>' + T('reveal') + ' <b>' + S.ans.k + '</b> <span style="opacity:.7">' + S.ans.r + '</span></div>';
-  showFeedback(ok, html);
-  $('btnMain').textContent = T('next');
-  $('btnMain').className = 'btn btn-primary';
-  $('btnMain').onclick = newRound;
-  maybeDone();
+  showFeedback(ok, ok ? '' : '<b>' + T('reveal') + '</b> ' + S.ans.k + ' <small>' + S.ans.r + '</small>');
+  $('btnMain').style.display = '';
+  speakAns();
 }
 
-/* ================= SET: read + set clock ================= */
-function renderSet(first){
-  if (first !== false) first = true;
-  var L = LEVELS[S.level];
-  $('modeTitle').textContent = T('modeSet');
-  $('clockWrap').innerHTML = clockSVG(S.setH, S.setM, S.setAp);
+/* ================= SET ================= */
+function renderSet(){
   var area = $('answerArea'); area.innerHTML = '';
-
   var targetDiv = document.createElement('div');
   targetDiv.className = 'target-read';
   targetDiv.innerHTML = '<div style="font-size:.82rem;color:var(--muted);margin-bottom:4px">Set the clock to:</div>' +
     S.ans.k + '<small>' + S.ans.r + '</small>';
   area.appendChild(targetDiv);
 
-  var hrLabel = document.createElement('div');
-  hrLabel.style.cssText = 'font-size:.82rem;font-weight:800;color:var(--muted);margin:4px 0';
-  hrLabel.textContent = '時 · HOUR';
-  area.appendChild(hrLabel);
-  var hrRow = document.createElement('div'); hrRow.className = 'chip-row';
+  var rowH = document.createElement('div'); rowH.className = 'chip-row'; area.appendChild(rowH);
   for (var h = 1; h <= 12; h++){
     var b = document.createElement('button');
-    b.className = 'chip' + (h === S.setH ? ' sel' : '');
+    b.className = 'chip' + (S.setH === h ? ' sel' : '');
     b.textContent = h;
-    b.dataset.h = h;
-    b.addEventListener('click', function(){ setHour(parseInt(this.dataset.h,10)); });
-    hrRow.appendChild(b);
+    b.addEventListener('click', function(hh){ return function(){ S.setH = hh; renderSet(); }; }(h));
+    rowH.appendChild(b);
   }
-  area.appendChild(hrRow);
 
-  var ctl = document.createElement('div');
-  var lbl = document.createElement('div');
-  lbl.style.cssText = 'font-size:.82rem;font-weight:800;color:var(--muted);margin:10px 0 4px';
-  var minLabel = T('minLbl') + ' ' + (S.cur.m === 0 ? T('minChodo') : S.cur.m === 30 ? T('minHan') : '');
-  lbl.textContent = minLabel;
-  var mr = document.createElement('div'); mr.className = 'min-row';
+  var rowM = document.createElement('div'); rowM.className = 'min-row'; area.appendChild(rowM);
+  var L = LEVELS[S.level];
   var lock = (S.cur.m === 0 || S.cur.m === 30);
   if (lock){
-    var fixedTxt = document.createElement('div');
-    fixedTxt.className = 'min-fixed';
-    fixedTxt.textContent = S.cur.m === 0 ? '00' : ':30';
-    mr.appendChild(fixedTxt);
+    var fixed = document.createElement('span');
+    fixed.className = 'min-fixed';
+    fixed.textContent = S.cur.m === 0 ? ':00 ' + T('minChodo') : ':30 ' + T('minHan');
+    rowM.appendChild(fixed);
+    S.setM = S.cur.m;
   } else {
-    mr.innerHTML = '<button class="stepbtn" id="mMinus">−</button><input class="min-val" id="minVal" type="text" inputmode="numeric" maxlength="2"><button class="stepbtn" id="mPlus">+</button>';
+    var dec = document.createElement('button'); dec.className = 'stepbtn'; dec.textContent = '−';
+    var inc = document.createElement('button'); inc.className = 'stepbtn'; inc.textContent = '+';
+    var mv = document.createElement('input'); mv.type = 'number'; mv.className = 'min-val'; mv.id = 'minVal';
+    mv.min = 0; mv.max = 59; mv.value = S.setM;
+    rowM.appendChild(dec); rowM.appendChild(mv); rowM.appendChild(inc);
+    dec.addEventListener('click', function(){ S.setM = (S.setM + 59) % 60; renderSet(); });
+    inc.addEventListener('click', function(){ S.setM = (S.setM + 1) % 60; renderSet(); });
+    mv.addEventListener('input', function(){ var v = parseInt(this.value,10); if (!isNaN(v) && v >= 0 && v <= 59) S.setM = v; drawSetClock(); });
+    mv.addEventListener('keydown', function(e){ if (e.key === 'Enter'){ e.preventDefault(); checkSet(); } });
   }
-  ctl.appendChild(lbl); ctl.appendChild(mr);
-  area.appendChild(ctl);
 
-  if (S.cur.ap){
-    var apLabel = document.createElement('div');
-    apLabel.style.cssText = 'font-size:.82rem;font-weight:800;color:var(--muted);margin:10px 0 4px';
-    apLabel.textContent = 'ごぜん / ごご · AM / PM';
-    area.appendChild(apLabel);
-    var apRow = document.createElement('div'); apRow.className = 'chip-row';
-    ['gozen','gogo'].forEach(function(apKey){
+  if (S.level === 5){
+    var rowAp = document.createElement('div'); rowAp.className = 'chip-row'; area.appendChild(rowAp);
+    ['gozen','gogo'].forEach(function(ap){
       var b = document.createElement('button');
-      b.className = 'chip' + (S.setAp === apKey ? ' sel' : '');
-      b.textContent = AP[apKey].en + ' · ' + AP[apKey].k;
-      b.addEventListener('click', function(){ S.setAp = apKey; renderSet(false); });
-      apRow.appendChild(b);
+      b.className = 'chip' + (S.setAp === ap ? ' sel' : '');
+      b.textContent = AP[ap].en + ' · ' + AP[ap].k;
+      b.addEventListener('click', function(){ S.setAp = ap; renderSet(); });
+      rowAp.appendChild(b);
     });
-    area.appendChild(apRow);
   }
-
-  var readout = document.createElement('div');
-  readout.className = 'readout';
-  readout.id = 'readout';
-  area.appendChild(readout);
-
-  S.setH = S.setH || 1;
-  if (lock) S.setM = S.cur.m;
-  else if (first) S.setM = 0;
-
-  var mMinusEl = $('mMinus'), mPlusEl = $('mPlus'), minValEl = $('minVal');
-  if (mMinusEl) mMinusEl.addEventListener('click', function(){ stepMin(-L.step); });
-  if (mPlusEl) mPlusEl.addEventListener('click', function(){ stepMin(L.step); });
-  if (minValEl) minValEl.disabled = lock;
-  if (minValEl && !lock){
-    minValEl.addEventListener('change', function(){ parseMinInput(this); });
-    minValEl.addEventListener('input', function(){ var v = parseInt(this.value,10); if (!isNaN(v) && v >= 0 && v <= 59){ S.setM = v; refreshReadout(); drawSetClock(); } });
-  }
-  if (minValEl && !lock && first) minValEl.value = S.setM;
-
-  refreshReadout(); drawSetClock();
 
   $('btnMain').textContent = T('check');
-  $('btnMain').className = 'btn btn-primary';
-  $('btnMain').onclick = function(){ if (!S.answered) checkSet(); };
+  $('btnMain').style.display = '';
+  $('btnMain').onclick = checkSet;
   $('btnSkip').classList.remove('hidden');
-  $('btnSkip').onclick = skip;
-  $('feedback').classList.remove('show');
+  drawSetClock();
 }
 
-function setHour(h){ S.setH = h; renderSet(false); }
-function stepMin(delta){ S.setM = Math.max(0, Math.min(59, S.setM + delta)); drawSetClock(); refreshReadout(); var el = $('minVal'); if (el) el.value = S.setM; }
-function parseMinInput(el){ var v = parseInt(el.value,10); if (isNaN(v) || v < 0) v = 0; if (v > 59) v = 59; S.setM = v; el.value = v; drawSetClock(); refreshReadout(); }
-function drawSetClock(){ $('clockWrap').innerHTML = clockSVG(S.setH, S.setM, S.setAp); }
-
-function refreshReadout(){
-  var r = $('readout');
-  if (!r) return;
-  r.innerHTML = timeKana(S.setH, S.setM, S.setAp) + '<small>' + timeRomaji(S.setH, S.setM, S.setAp) + '</small>';
+function drawSetClock(){
+  $('clockWrap').innerHTML = clockSVG(S.setH, S.setM, S.setAp);
+  drawSpeaker();
 }
 
 function checkSet(){
+  S.answered = true;
   var ok = (S.setH === S.ans.h && S.setM === S.ans.m && S.setAp === S.ans.ap);
-  S.answered = true; S.correct = ok;
+  S.correct = ok;
   record(S.key, ok);
   chime(ok ? 'ok' : 'bad');
-  var html = '';
-  if (!ok) html = '<div>' + T('reveal') + ' <b>' + S.ans.k + '</b> <span style="opacity:.7">' + S.ans.r + '</span></div>';
-  showFeedback(ok, html);
+  showFeedback(ok, ok ? '' : '<b>' + T('reveal') + '</b> ' + S.ans.k + ' <small>' + S.ans.r + '</small>');
   $('btnMain').textContent = T('next');
-  $('btnMain').className = 'btn btn-primary';
-  $('btnMain').onclick = newRound;
-  $('btnSkip').classList.add('hidden');
-  maybeDone();
+  $('btnMain').onclick = function(){ nextExercise(); };
 }
 
-function skip(){ record(S.key, false); newRound(); }
-
-/* ================= DONE ================= */
-function maybeDone(){
-  if (!levelDone(S.level)) return;
-  if (doneShown) return;
-  doneShown = true;
-  var L = LEVELS[S.level];
-  var nextL = LEVELS[S.level + 1];
-  var msg = '<b>' + L.name + '</b> completed! 🎉';
-  if (nextL) msg += '<br>' + nextL.name + ' is now unlocked.';
-  $('doneMsg').innerHTML = msg;
-  $('doneOv').classList.remove('hidden');
-}
-
-$('btnNextLevel').addEventListener('click', function(){
-  $('doneOv').classList.add('hidden');
-  if (LEVELS[S.level + 1]){ S.level++; doneShown = false; newRound(); }
-});
-$('btnStay').addEventListener('click', function(){
-  $('doneOv').classList.add('hidden');
-  doneShown = false;
-});
-
-/* ================= RANDOM HELPERS ================= */
-var posBag = [];
-function drawPos(n){
-  if (!posBag.length){
-    for (var i = 0; i < n; i++) posBag.push(i);
-    for (var j = posBag.length - 1; j > 0; j--){
-      var k = Math.floor(Math.random() * (j + 1));
-      var tmp = posBag[j]; posBag[j] = posBag[k]; posBag[k] = tmp;
-    }
+/* ================= NEXT / SKIP ================= */
+function nextExercise(){
+  if (levelDone(S.level) && !doneShown){
+    doneShown = true;
+    $('doneMsg').innerHTML = (lang === 'pt' ? 'Você completou <b>' + LEVELS[S.level].name + '</b>!' : 'You completed <b>' + LEVELS[S.level].name + '</b>!');
+    $('doneOv').classList.remove('hidden');
+    return;
   }
-  return posBag.shift();
+  if (S.mode === 'mc' || S.mode === 'lmc') nextMode();
+  else startExercise();
 }
 
-/* ================= SAVE / EXPORT / IMPORT ================= */
+function skipSet(){
+  S.answered = true; S.correct = false;
+  record(S.key, false);
+  chime('bad');
+  showFeedback(false, '<b>' + T('reveal') + '</b> ' + S.ans.k + ' <small>' + S.ans.r + '</small>');
+  $('btnMain').textContent = T('next');
+  $('btnMain').onclick = function(){ nextExercise(); };
+}
+
+/* ================= MASTERY ================= */
+function updateMastery(){
+  var row = $('masteryRow'); row.innerHTML = '';
+  var L = LEVELS[S.level];
+  L.items.forEach(function(k){
+    var n = okOf(k);
+    var b = document.createElement('div');
+    b.className = 'm-item' + (mastered(k) ? ' stars' : '');
+    b.textContent = (mastered(k) ? '★ ' : '☆ ') + k + ' (' + n + '/' + MASTER + ')';
+    row.appendChild(b);
+  });
+}
+
+/* ================= SAVE / LOAD ================= */
+function storageOK(){ try{ localStorage.setItem('__t_test__','1'); localStorage.removeItem('__t_test__'); return true; }catch(e){ return false; } }
+
 function gatherStore(){
   var store = {};
   try{
-    var s = localStorage.getItem(KEY);
-    if (s) store = JSON.parse(s);
-  }catch(e){}
-  store.app = 'tokei-chan'; store.v = 1;
-  // Overlay live prog + lesMem so export reflects current session even if storage is blocked
-  store.m = prog.m; store.score = prog.score; store.best = prog.best;
-  store.total = prog.total; store.correct = prog.correct;
-  var les = {};
-  Object.keys(lesMem).forEach(function(k){ les[k] = true; });
-  try{
     for (var i = 0; i < localStorage.length; i++){
-      var k2 = localStorage.key(i);
-      if (k2 && k2.indexOf('tokei-chan-les-') === 0) les[k2.replace('tokei-chan-les-','')] = true;
+      var k = localStorage.key(i);
+      if (k && k.indexOf('tokei-chan-') === 0) store[k] = localStorage.getItem(k);
     }
   }catch(e){}
-  store._lessons = les;
+  store['__prog__'] = JSON.stringify(prog);
+  store['__lesMem__'] = JSON.stringify(lesMem);
   return store;
 }
 
-function toB64(o){ return btoa(unescape(encodeURIComponent(JSON.stringify(o)))); }
-function fromB64(s){ return JSON.parse(decodeURIComponent(escape(atob(s)))); }
-
-function storageOK(){
-  try{ var t = 'tokei-test-' + Date.now(); localStorage.setItem(t, '1'); localStorage.removeItem(t); return true; }catch(e){ return false; }
-}
-
-function exportSave(){
-  var s = JSON.stringify(gatherStore());
-  var blob = new Blob([s], {type:'application/json'});
-  var a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'tokei-chan-save.json';
-  a.click();
-}
-
-function showCode(title, text, okText, cancelText, onOk){
-  $('codeTitle').textContent = title;
-  var ta = $('codeTa'); ta.value = text;
-  $('btnCodeOk').textContent = okText;
-  $('btnCodeCancel').textContent = cancelText;
-  $('codeOv').classList.remove('hidden');
-  $('btnCodeOk').onclick = function(){ onOk(ta.value); };
-  $('btnCodeCancel').onclick = function(){ $('codeOv').classList.add('hidden'); };
-}
-
-function showExportCode(){
+function saveCode(){
   var store = gatherStore();
-  var code = toB64(store);
-  showCode(T('codeShow'), code, 'OK', T('cancelBtn'), function(){
-    $('codeOv').classList.add('hidden');
-  });
+  var json = JSON.stringify(store);
+  var b64 = '';
+  try{ b64 = btoa(unescape(encodeURIComponent(json))); }catch(e){ b64 = btoa(json); }
+  return b64;
+}
+
+function applyStore(store){
   try{
-    navigator.clipboard.writeText(code).then(function(){ showToast('📋 Save code copied to clipboard'); });
+    for (var k in store){
+      if (k === '__prog__') prog = JSON.parse(store[k]);
+      else if (k === '__lesMem__') lesMem = JSON.parse(store[k]);
+      else try{ localStorage.setItem(k, store[k]); }catch(e){}
+    }
   }catch(e){}
 }
 
-function showImportCode(){
-  showCode(T('codePaste'), '', T('importBtn'), T('cancelBtn'), function(text){
-    $('codeOv').classList.add('hidden');
-    importSaveCode(text.trim());
-  });
-}
-
-function importSaveCode(code){
-  try{
-    var data = fromB64(code);
-    if (data.app !== 'tokei-chan') throw new Error('bad app');
-    applyStoreSmart(data);
-  }catch(e){ alert(T('importErr')); }
-}
-
-function applyStoreSmart(data){
-  prog.m = data.m || {}; prog.score = data.score || 0; prog.best = data.best || 0;
-  prog.total = data.total || 0; prog.correct = data.correct || 0;
-  if (data._lessons){
-    Object.keys(data._lessons).forEach(function(k){ lesMem[k] = 1; lesSet(k); });
-  }
-  save();
-  if (storageOK()){
-    location.reload();
+function applyStoreSmart(store){
+  applyStore(store);
+  if (!storageOK()){
+    updateStats(); renderLevels(); startExercise();
   } else {
-    renderLevels(); updateStats(); renderStars();
-    if (!S.answered && S.mode !== 'set') newRound();
-    showToast('✅ Save applied! (localStorage blocked — export often)');
+    location.reload();
   }
 }
 
-function importSaveFile(file){
+function importSave(code){
+  try{
+    var json = decodeURIComponent(escape(atob(code)));
+    var store = JSON.parse(json);
+    applyStoreSmart(store);
+    return true;
+  }catch(e){ return false; }
+}
+
+function copySave(){
+  var code = saveCode();
+  try{
+    navigator.clipboard.writeText(code).then(function(){
+      alert('Save code copied! Keep it somewhere safe.');
+    }, function(){
+      showCodeOverlay(code, true);
+    });
+  }catch(e){
+    showCodeOverlay(code, true);
+  }
+}
+
+function pasteSaveCode(){
+  showCodeOverlay('', false);
+}
+
+function showCodeOverlay(code, isExport){
+  var ov = $('codeOv');
+  $('codeTitle').textContent = isExport ? T('codeShow') : T('pastePrompt');
+  $('codeTa').value = code;
+  $('btnCodeOk').textContent = isExport ? T('cancelBtn') : T('importBtn');
+  $('btnCodeCancel').textContent = T('cancelBtn');
+  $('btnCodeCancel').style.display = isExport ? '' : 'none';
+  ov.classList.remove('hidden');
+
+  var onOk = function(){
+    ov.classList.add('hidden');
+    if (!isExport){
+      var val = $('codeTa').value.trim();
+      if (!val || !importSave(val)){
+        $('feedback').className = 'feedback show f-bad';
+        $('feedback').textContent = T('importErr');
+      }
+    }
+    cleanup();
+  };
+  var onCancel = function(){ ov.classList.add('hidden'); cleanup(); };
+
+  function cleanup(){
+    $('btnCodeOk').removeEventListener('click', onOk);
+    $('btnCodeCancel').removeEventListener('click', onCancel);
+  }
+  $('btnCodeOk').addEventListener('click', onOk);
+  $('btnCodeCancel').addEventListener('click', onCancel);
+}
+
+function importFile(){
+  var f = $('fileImport').files[0];
+  if (!f) return;
   var r = new FileReader();
   r.onload = function(e){
     try{
-      var data = JSON.parse(e.target.result);
-      if (data.app !== 'tokei-chan') throw new Error('bad app');
-      applyStoreSmart(data);
-    }catch(err){ alert(T('importErr')); }
-  };
-  r.readAsText(file);
-}
-
-function resetProgress(){
-  prog = blankProg();
-  try{
-    localStorage.removeItem(KEY);
-    for (var i = 0; i < localStorage.length; i++){
-      var k = localStorage.key(i);
-      if (k && k.indexOf('tokei-chan-les-') === 0) localStorage.removeItem(k);
+      var store = JSON.parse(e.target.result);
+      applyStoreSmart(store);
+    }catch(err){
+      $('feedback').className = 'feedback show f-bad';
+      $('feedback').textContent = T('importErr');
     }
-  }catch(e){}
-  S.streak = 0; S.level = 0; doneShown = false;
-  updateStats(); renderLevels(); newRound();
-}
-
-function showToast(msg){
-  var t = document.createElement('div');
-  t.textContent = msg;
-  t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#2c3240;color:#fff;padding:10px 20px;border-radius:999px;font-size:.9rem;font-weight:700;z-index:60;box-shadow:0 6px 20px rgba(0,0,0,.2)';
-  document.body.appendChild(t);
-  setTimeout(function(){ t.style.opacity = '0'; t.style.transition = 'opacity .5s'; setTimeout(function(){ t.remove(); }, 500); }, 3000);
+  };
+  r.readAsText(f);
 }
 
 /* ================= EVENTS ================= */
-$('btnSound').addEventListener('click', function(){
-  soundOn = !soundOn;
-  this.textContent = soundOn ? '🔊' : '🔇';
-  try{ localStorage.setItem('tokei-chan-sound', soundOn ? 'on' : 'off'); }catch(e){}
-});
-
-$('btnEN').addEventListener('click', function(){ setLang('en'); $('btnEN').classList.add('on'); $('btnPT').classList.remove('on'); });
-$('btnPT').addEventListener('click', function(){ setLang('pt'); $('btnPT').classList.add('on'); $('btnEN').classList.remove('on'); });
-
-$('btnWelcome').addEventListener('click', function(){ $('welcomeOv').classList.add('hidden'); });
-
-$('btnExport').addEventListener('click', function(){ showExportCode(); });
-$('btnPasteCode').addEventListener('click', function(){ showImportCode(); });
-$('btnImport').addEventListener('click', function(){ $('fileImport').click(); });
-$('fileImport').addEventListener('change', function(e){ if (e.target.files[0]) importSaveFile(e.target.files[0]); });
-$('btnReset').addEventListener('click', function(){
-  showCode('Reset?', 'This will erase ALL progress. Are you sure?', 'Reset', 'Cancel', function(){
-    $('codeOv').classList.add('hidden');
-    resetProgress();
+function bind(){
+  $('btnGame').addEventListener('click', function(){ S.tab='game'; showGame(); });
+  $('btnGuide').addEventListener('click', function(){ S.tab='guide'; showGuide(); });
+  $('btnEN').addEventListener('click', function(){ setLang('en'); $('btnEN').classList.add('on'); $('btnPT').classList.remove('on'); });
+  $('btnPT').addEventListener('click', function(){ setLang('pt'); $('btnPT').classList.add('on'); $('btnEN').classList.remove('on'); });
+  $('btnSound').addEventListener('click', function(){ soundOn = !soundOn; try{ localStorage.setItem('tokei-chan-sound', soundOn?'on':'off'); }catch(e){} $('btnSound').textContent = soundOn ? '🔊' : '🔇'; });
+  $('btnWelcome').addEventListener('click', function(){ $('welcomeOv').classList.add('hidden'); });
+  $('btnSkip').addEventListener('click', skipSet);
+  $('btnExport').addEventListener('click', copySave);
+  $('btnPasteCode').addEventListener('click', pasteSaveCode);
+  $('btnImport').addEventListener('click', function(){ $('fileImport').click(); });
+  $('fileImport').addEventListener('change', importFile);
+  $('btnNextLevel').addEventListener('click', function(){ $('doneOv').classList.add('hidden'); if (S.level + 1 < LEVELS.length){ S.level++; MC_INDEX = 0; S.mode = 'mc'; updateStats(); renderLevels(); startExercise(); } });
+  $('btnStay').addEventListener('click', function(){ $('doneOv').classList.add('hidden'); startExercise(); });
+  $('btnReset').addEventListener('click', function(){
+    if (confirm('Reset all progress?')){
+      prog = blankProg(); save();
+      S.streak = 0; S.score = 0;
+      updateStats(); renderLevels(); startExercise();
+    }
   });
-});
+
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape'){
+      ['welcomeOv','lessonOv','codeOv','doneOv'].forEach(function(id){ $(id).classList.add('hidden'); });
+    }
+  });
+}
+
+function showGame(){
+  $('gameCard').style.display = ''; $('masteryRow').style.display = ''; $('levelRow').style.display = '';
+  $('btnGame').classList.add('on'); $('btnGuide').classList.remove('on');
+}
+function showGuide(){
+  $('gameCard').style.display = 'none'; $('masteryRow').style.display = 'none'; $('levelRow').style.display = 'none';
+  $('btnGuide').classList.add('on'); $('btnGame').classList.remove('on');
+}
 
 /* ================= INIT ================= */
-renderLevels();
-newRound();
+function init(){
+  bind();
+  renderLevels();
+  updateStats();
+  $('btnSound').textContent = soundOn ? '🔊' : '🔇';
+  if (!storageOK()){
+    var note = document.createElement('p');
+    note.className = 'save-note';
+    note.textContent = T('noSave');
+    note.style.cssText = 'color:var(--warn);background:var(--warn-bg);border:1px solid #f0d89a;border-radius:12px;padding:10px 14px;margin-top:8px';
+    document.querySelector('.save-row').appendChild(note);
+  }
+  startExercise();
+}
 
-// Expose handle for rescue / automated testing
+init();
+
+/* ================= EXPOSED HANDLES ================= */
 window.tokei = {
-  S: S, prog: prog, LEVELS: LEVELS,
-  newRound: newRound, renderMC: renderMC, renderLMC: renderLMC, renderSet: renderSet,
-  checkMC: checkMC, checkLMC: checkLMC, checkSet: checkSet,
-  itemTime: itemTime, itemWeight: itemWeight, drawPos: drawPos,
-  timeKana: timeKana, timeRomaji: timeRomaji, clockSVG: clockSVG,
-  buildAns: buildAns, gatherStore: gatherStore,
-  storageOK: storageOK, levelUnlocked: levelUnlocked,
-  applyStoreSmart: applyStoreSmart, renderSet: renderSet,
+  state: function(){ return S; },
+  lesMem: function(){ return lesMem; },
+  record: record,
+  saveCode: saveCode,
+  gatherStore: gatherStore,
+  storageOK: storageOK,
+  levelUnlocked: levelUnlocked,
+  applyStoreSmart: applyStoreSmart,
+  renderSet: renderSet,
   LEVELS: LEVELS
 };
 
